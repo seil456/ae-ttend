@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <!-- Import tailwindcss -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <header class="flex items-center justify-between py-4 px-8 border-b border-gray-100 bg-[#2d728f]">
+        <div class="flex items-center gap-2">
+            <img src="../../public/images/assets/Logo.jpeg" alt="Logo" class="w-8 h-8 object-contain rounded-md">
+            <span class="font-bold text-xl text-white">ae-ttend</span>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-8">
+            <a href="#" class="text-white font-semibold border-b-2 border-indigo-600 pb-1">Overview</a>
+            <a href="#" class="text-white hover:text-gray-600 transition">Presensi</a>
+            <a href="#" class="text-white hover:text-gray-600 transition">Announcement</a>
+        </nav>
+
+        <div class="flex items-center gap-6">
+            <div class="hidden lg:flex items-center bg-gray-100 px-4 py-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input type="text" placeholder="Search for courses" class="bg-transparent border-none focus:outline-none text-sm ml-2 w-40">
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs font-bold text-white leading-none">Jamie Lee Smith</p>
+                    <p class="text-[10px] text-white">Student</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden">
+                    <img src="https://ui-avatars.com/api/?name=Jamie+Lee&background=random" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="p-8 bg-gray-50 min-h-screen">
+        <div class="flex flex-col xl:flex-row gap-8">
+            
+            <div class="flex-1 space-y-8">
+                <div class="bg-[#2d728f] rounded-3xl p-8 flex justify-between items-center text-white relative overflow-hidden">
+                    <div class="z-10">
+                        <h2 class="text-lg opacity-90">Welcome back,</h2>
+                        <h1 class="text-3xl font-bold">Agisna F I</h1>
+                        <a href="#" class="mt-6 inline-block text-sm border-b border-white pb-1 hover:opacity-80 transition">
+                            Go back to the course &rarr;
+                        </a>
+                    </div>
+                    <div class="hidden md:block z-10">
+                        <div class="w-48 h-32 bg-cyan-600 rounded-xl flex items-center justify-center border-2 border-dashed border-cyan-300">
+                            <span class="text-xs">Illustration Here</span>
+                        </div>
+                    </div>
+                    <div class="absolute top-[-20px] right-[-20px] w-40 h-40 bg-cyan-600 rounded-full opacity-20"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex flex-col items-center">
+                        <h3 class="font-bold text-gray-800 self-start">Today's goal</h3>
+                        <div class="relative flex items-center justify-center mt-4">
+                            <div class="w-24 h-24 rounded-full border-[10px] border-orange-400 border-t-transparent rotate-45"></div>
+                            <span class="absolute text-xl font-bold">85%</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-4">Today's goal</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 flex flex-col items-center">
+                        <h3 class="font-bold text-gray-800 self-start">Your score looks good!</h3>
+                        <div class="relative flex items-center justify-center mt-4">
+                            <div class="w-24 h-24 rounded-full border-[10px] border-indigo-500 border-t-transparent -rotate-90"></div>
+                            <span class="absolute text-xl font-bold">50%</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-4">Overall score</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100">
+                        <h3 class="font-bold text-gray-800 mb-4">Your courses</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between text-xs">
+                                <span>JS</span>
+                                <div class="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="bg-indigo-500 h-full w-[85%]"></div>
+                                </div>
+                                <span class="font-bold">85%</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs">
+                                <span>Python</span>
+                                <div class="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="bg-indigo-500 h-full w-[38%]"></div>
+                                </div>
+                                <span class="font-bold">38%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="w-full xl:w-[350px]">
+                <div class="bg-white rounded-3xl p-6 shadow-lg border border-gray-100">
+                    
+                    <div class="flex justify-between items-center mb-6">
+                        <div id="calendar-header">
+                            <span class="text-sm font-bold text-gray-800" id="month-date-display">Month 00</span>
+                            <span class="text-sm text-gray-400 ml-1" id="day-display">Day</span>
+                        </div>
+                        <div class="flex gap-2 text-gray-400 font-bold">
+                            <button class="hover:text-gray-800 transition">&lt;</button>
+                            <button class="hover:text-gray-800 transition">&gt;</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-7 text-center text-xs font-semibold text-orange-400 mb-4">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+
+                    <div id="calendar-days" class="grid grid-cols-7 text-center text-sm text-gray-600 gap-y-4">
+                        </div>
+                    
+                </div>
+            </aside>
+
+        </div>
+    </div>
+
+</body>
+<script src="../../public/js/index.js" defer></script>
+</html>

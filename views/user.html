@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Nyakola</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-teal: #266d84;
+            --secondary-teal: #1e586b;
+            --accent-yellow: #f8df72;
+            --bg-light: #f5f8fa;
+            --text-dark: #1f333f;
+            --text-gray: #6b7a85;
+            --white: #ffffff;
+            --border-color: #e5e9eb;
+            --input-bg: #f9fafb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            display: flex;
+            height: 100vh;
+            color: var(--text-dark);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px 40px;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        /* Container untuk membatasi lebar maksimal konten agar rapi */
+        .content-container {
+            max-width: 900px;
+            margin: 0 auto; /* Membuat konten rata tengah */
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        /* Tombol Kembali */
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            color: var(--primary-teal);
+            font-weight: 700;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .btn-back:hover {
+            color: var(--secondary-teal);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification {
+            color: var(--primary-teal);
+            font-size: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 8px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            border: 2px solid var(--bg-light);
+        }
+
+        /* Profile Card Styles */
+        .card {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            padding: 30px;
+            border-top: 4px solid var(--primary-teal);
+            /* Ukuran card dibatasi oleh .content-container di atasnya */
+        }
+
+        .profile-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .profile-summary-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-summary-left .avatar-large {
+            width: 70px;
+            height: 70px;
+            background-color: var(--accent-yellow);
+            color: var(--primary-teal);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 24px;
+            border: 2px solid var(--border-color);
+        }
+
+        .profile-name h2 {
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .profile-name p {
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        .btn-edit {
+            background-color: var(--primary-teal);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-edit:hover {
+            background-color: var(--secondary-teal);
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-dark);
+            transition: 0.2s;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-teal);
+            background-color: var(--white);
+            box-shadow: 0 0 0 3px rgba(38, 109, 132, 0.1);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7a85' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 16px) center;
+            padding-right: 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="main-content">
+        <div class="content-container">
+            
+            <header class="header">
+                <div class="header-title">
+                    <a href="dashboard.html" class="btn-back">
+                        <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard
+                    </a>
+                </div>
+                <div class="header-right">
+                    <i class="fa-regular fa-bell notification"></i>
+                </div>
+            </header>
+
+            <div class="card">
+                <div class="profile-summary">
+                    <div class="profile-summary-left">
+                        <div class="avatar-large">AG</div>
+                        <div class="profile-name">
+                            <h2>Aje Gile</h2>
+                            <p>aje.gile@mahasiswa.univ.ac.id</p>
+                        </div>
+                    </div>
+                    <button class="btn-edit">Edit Profil</button>
+                </div>
+
+                <form class="profile-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="nama">Nama Lengkap</label>
+                            <input type="text" id="nama" class="form-control" value="Aje Gile" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nim">NIM</label>
+                            <input type="text" id="nim" class="form-control" value="1234567890" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jenis_kelamin">Jenis Kelamin</label>
+                            <select id="jenis_kelamin" class="form-control" disabled>
+                                <option value="L" selected>Laki-laki</option>
+                                <option value="P">Perempuan</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tanggal_lahir">Tanggal Lahir</label>
+                            <input type="date" id="tanggal_lahir" class="form-control" value="2002-05-15" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Alamat Email</label>
+                            <input type="email" id="email" class="form-control" value="aje.gile@mahasiswa.univ.ac.id" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="no_telp">No. Telepon / WhatsApp</label>
+                            <input type="tel" id="no_telp" class="form-control" value="081234567890" readonly>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>
