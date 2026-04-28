@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nyakola - Dashboard</title>
+    <title>AE-ttend - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -41,28 +41,87 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
 
   <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    //variabel modal add
     const modal = document.getElementById("modalAdd");
     const modalContent = modal.querySelector("div");
+    
+    //variabel modal edit
+    const modalEdit = document.getElementById("modalEdit");
+    const editContent = modalEdit.querySelector("div");
 
-    function openModal() {
+    //variabel modal delete
+    const modalDelete = document.getElementById("modalDelete");
+    const deleteContent = modalDelete.querySelector("div");
+
+    //-- FUNGSI MODAL ADD ---
+    window.openModal = function(){
       modal.classList.remove("hidden");
       setTimeout(() => {
         modal.classList.remove("opacity-0");
         modalContent.classList.remove("scale-95");
+        modalContent.classList.add("scale-100");
       }, 10);
-    }
+    };
 
-    function closeModal() {
+    window.closeModal = function() {
       modal.classList.add("opacity-0");
+      modalContent.classList.remove("scale-100");
       modalContent.classList.add("scale-95");
       setTimeout(() => {
         modal.classList.add("hidden");
       }, 300);
-    }
+    };
+
+      // --- FUNGSI MODAL EDIT ---
+    window.openEditModal = function() {
+      modalEdit.classList.remove("hidden");
+      setTimeout(() => {
+        modalEdit.classList.remove("opacity-0");
+        editContent.classList.remove("scale-95");
+        editContent.classList.add("scale-100");
+      }, 10);
+    };
+
+    window.closeEditModal = function() {
+      modalEdit.classList.add("opacity-0");
+      editContent.classList.remove("scale-100");
+      editContent.classList.add("scale-95");
+      setTimeout(() => {
+        modalEdit.classList.add("hidden");
+      }, 300);
+    };
+
+    // --- FUNGSI MODAL DELETE ---
+    window.openDeleteModal = function() {
+      modalDelete.classList.remove("hidden");
+      setTimeout(() => {
+        modalDelete.classList.remove("opacity-0");
+        deleteContent.classList.remove("scale-95");
+        deleteContent.classList.add("scale-100");
+      }, 10);
+    };
+
+    window.closeDeleteModal = function() {
+      modalDelete.classList.add("opacity-0");
+      deleteContent.classList.remove("scale-100");
+      deleteContent.classList.add("scale-95");
+      setTimeout(() => {
+        modalDelete.classList.add("hidden");
+      }, 300);
+    };
+
+    window.confirmDelete = function() {
+      alert("Data berhasil dihapus!");
+      closeDeleteModal();
+    };
 
     window.onclick = function (e) {
       if (e.target === modal) closeModal();
-    };
+      if (e.target === modalEdit) closeEditModal();
+      if (e.target === modalDelete) closeDeleteModal();
+      };
+    });
   </script>
   <body class="bg-slate-50 text-slate-800 antialiased overflow-hidden">
     <div class="flex h-screen w-full">
@@ -89,7 +148,7 @@
               </svg>
             </div>
             <h2 class="text-xl font-bold text-vanila tracking-wider">
-              NYAKOLA
+              AE-ttend
             </h2>
           </div>
         </div>
@@ -278,11 +337,8 @@
                 <thead>
                   <tr class="bg-pasifik text-white">
                     <th class="p-4 text-xs font-semibold uppercase">No</th>
-                    <th class="p-4 text-xs font-semibold uppercase">Foto</th>
                     <th class="p-4 text-xs font-semibold uppercase">NIM</th>
-                    <th class="p-4 text-xs font-semibold uppercase">Nama</th>
-                    <th class="p-4 text-xs font-semibold uppercase">Kelas</th>
-                    <th class="p-4 text-xs font-semibold uppercase">Prodi</th>
+                    <th class="p-4 text-xs font-semibold uppercase">User</th>
                     <th class="p-4 text-xs font-semibold uppercase text-center">
                       Status
                     </th>
@@ -294,43 +350,62 @@
                     </th>
                   </tr>
                 </thead>
-
                 <tbody class="divide-y divide-gray-100">
                   <!-- Dummy Row -->
                   <tr class="hover:bg-gray-50 transition-colors">
                     <td class="p-4 text-sm text-gray-600">1</td>
+
+                    <td class="p-4 text-sm font-semibold text-gray-700">
+                      2026001
+                    </td>
+
+                    <!-- USER COMBINED -->
                     <td class="p-4">
-                      <div
-                        class="w-10 h-10 rounded-full overflow-hidden border-2 border-pasifik"
-                      >
-                        <img
-                          src="https://ui-avatars.com/api/?name=Admin+User&background=3b8ea5&color=fff"
-                        />
+                      <div class="flex items-center gap-3">
+                        <div
+                          class="w-12 h-12 rounded-full overflow-hidden border-2 border-pasifik"
+                        >
+                          <img
+                            src="https://ui-avatars.com/api/?name=John+Doe&background=3b8ea5&color=fff"
+                            class="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <p class="text-sm font-bold text-langit">John Doe</p>
+                          <p class="text-xs text-gray-500">TRIN • 1AEC2</p>
+                        </div>
                       </div>
                     </td>
-                    <td class="p-4 text-sm font-bold text-gray-700">2026001</td>
-                    <td class="p-4 text-sm font-semibold text-langit">
-                      Admin User
-                    </td>
-                    <td class="p-4 text-sm text-gray-600">1A</td>
-                    <td class="p-4 text-sm text-gray-500">Informatics</td>
+
+                    <!-- STATUS -->
                     <td class="p-4 text-center">
                       <span
                         class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase"
-                        >Active</span
                       >
+                        Active
+                      </span>
                     </td>
-                    <td class="p-4 text-center text-sm text-gray-600">Admin</td>
+
+                    <!-- ROLE -->
+                    <td class="p-4 text-center text-sm text-gray-600">
+                      <span
+                        class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold"
+                      >
+                        Admin
+                      </span>
+                    </td>
+
+                    <!-- ACTION -->
                     <td class="p-4">
-                      <div class="flex justify-center gap-3 text-lg">
+                      <div class="flex justify-center gap-4 text-lg">
                         <i
                           class="fas fa-eye text-pasifik hover:scale-125 cursor-pointer"
                         ></i>
                         <i
-                          class="fas fa-edit text-langit hover:scale-125 cursor-pointer"
+                          onclick="openEditModal()" class="fas fa-edit text-langit hover:scale-125 transition-transform cursor-pointer"
                         ></i>
                         <i
-                          class="fas fa-trash text-red-500 hover:scale-125 cursor-pointer"
+                          onclick="openDeleteModal()" class="fas fa-trash text-red-500 hover:scale-125 cursor-pointer transition-transform"
                         ></i>
                       </div>
                     </td>
@@ -389,8 +464,81 @@
               </form>
             </div>
           </div>
-        </main>
-      </div>
+
+         <div id="modalEdit" class="fixed inset-0 bg-langit/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-all duration-300">
+            <div class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden transform scale-95 transition-all duration-300">
+                <div class="bg-gradient-to-r from-pasifik to-langit p-6 text-white flex justify-between items-center">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-vanila/20 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-user-edit text-vanila text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="text-xl font-bold">Edit User Data</h3>
+                      <p class="text-white/70 text-xs">Ubah informasi akun pengguna</p>
+                    </div>
+                  </div>
+                  <button onclick="closeEditModal()" class="hover:rotate-90 transition-transform">
+                    <i class="fas fa-times text-2xl"></i>
+                  </button>
+                </div>
+
+                <form class="p-8 space-y-4">
+                  <div class="space-y-1">
+                    <label class="text-xs font-bold text-langit ml-1 uppercase">NIM (Read Only)</label>
+                    <input type="text" id="edit_nim" value="2026001" readonly class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl text-slate-500 cursor-not-allowed outline-none" />
+                  </div>
+                      
+                  <div class="space-y-1">
+                    <label class="text-xs font-bold text-langit ml-1 uppercase">Nama Lengkap</label>
+                    <input type="text" id="edit_nama" value="John Doe" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pasifik outline-none transition-all" />
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                      <label class="text-xs font-bold text-langit ml-1 uppercase">Kelas</label>
+                      <input type="text" id="edit_kelas" value="1A" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pasifik outline-none transition-all" />
+                    </div>
+                    <div class="space-y-1">
+                      <label class="text-xs font-bold text-langit ml-1 uppercase">Role</label>
+                      <select id="edit_role" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-pasifik outline-none transition-all appearance-none">
+                        <option selected>Admin</option>
+                        <option>User</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeEditModal()" class="flex-1 py-3 font-bold text-slate-400 hover:text-slate-600 transition-colors">
+                      Cancel
+                    </button>
+                    <button type="submit" class="flex-1 py-3 bg-langit hover:bg-pasifik text-white rounded-xl font-bold shadow-lg shadow-langit/20 transition-all active:scale-95">
+                      Update Data
+                    </button>
+                  </div>
+                </form>
+              </div>  
+            </div>
+
+          <div id="modalDelete" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center hidden opacity-0 transition-all duration-300">
+              <div class="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden transform scale-95 transition-all duration-300 p-8 text-center">
+                  <div class="w-20 h-20 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <i class="fas fa-exclamation-triangle text-3xl"></i>
+                  </div>
+                  
+                  <h3 class="text-2xl font-bold text-slate-800 mb-2">Yakin dihapus?</h3>
+                  <p class="text-slate-500 mb-8 text-sm">Data yang sudah dihapus tidak bisa dikembalikan lagi ke sistem AE-ttend.</p>
+                  
+                  <div class="flex gap-3">
+                      <button type="button" onclick="closeDeleteModal()" class="flex-1 py-3 font-bold text-slate-400 hover:text-slate-600 transition-colors">
+                          Batal
+                      </button>
+                      <button type="button" onclick="confirmDelete()" class="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold shadow-lg shadow-red-200 transition-all active:scale-95">
+                          Ya, Hapus!
+                      </button>
+                  </div>
+              </div>
+          </div>
+        </main> </div> 
     </div>
   </body>
 </html>

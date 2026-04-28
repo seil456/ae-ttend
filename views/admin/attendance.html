@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nyakola - Dashboard</title>
+    <title>AE-ttend - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -63,7 +63,7 @@
               </svg>
             </div>
             <h2 class="text-xl font-bold text-vanila tracking-wider">
-              NYAKOLA
+              AE-ttend
             </h2>
           </div>
         </div>
@@ -227,7 +227,141 @@
             </div>
           </div>
         </header>
-        <main class="flex-1 overflow-y-auto p-8"></main>
+        <main class="flex-1 overflow-y-auto p-8">
+          <div class="max-w-7xl mx-auto bg-white p-6 rounded-2xl shadow-xl">
+            <!-- Header -->
+            <div
+              class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8"
+            >
+              <div>
+                <h2 class="text-2xl font-bold text-langit">Attendance Management</h2>
+                <p class="text-gray-500 text-sm">Manage attendance data</p>
+              </div>
+
+              <button
+                onclick="openModal()"
+                class="bg-pasifik hover:bg-langit text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-md active:scale-95"
+              >
+                <i class="fas fa-plus"></i> + Attendance
+              </button>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto rounded-xl border border-gray-100">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-pasifik text-white">
+                    <th class="p-4 text-xs font-semibold uppercase">NIM</th>
+                    <th class="p-4 text-xs font-semibold uppercase">Student</th>
+                    <th class="p-4 text-xs font-semibold uppercase">Date</th>
+                    <th class="p-4 text-xs font-semibold uppercase text-center">
+                      Check-in
+                    </th>
+                    <th class="p-4 text-xs font-semibold uppercase text-center">
+                      Check-out
+                    </th>
+                    <th class="p-4 text-xs font-semibold uppercase text-center">
+                      Status
+                    </th>
+                    <th class="p-4 text-xs font-semibold uppercase text-center">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-100">
+                  <!-- Dummy Row -->
+                  <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4 text-sm font-bold text-gray-700">2026001</td>
+                    <td class="p-4 text-sm font-semibold text-langit">
+                      <div class="flex items-center gap-3">
+                        <div class="bg-gray-200 border-2 border-dashed rounded-full w-12 h-12">
+                          <img src="../../public/images/userPics/bjhabibie2.png" alt="userPic" class="w-full h-full object-cover rounded-full" />
+                        </div>
+                        <div>
+                          <p class="text-sm font-bold">John Doe</p>
+                          <p class="text-xs text-gray-500">TRIN | 1AEC2</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="p-4 text-sm text-gray-600">2023-10-15</td>
+                    <td class="p-4 text-sm text-gray-500 text-center">08:00</td>
+                    <td class="p-4 text-sm text-gray-500 text-center">16:00</td>
+                    <td class="p-4 text-center">
+                      <span
+                        class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase"
+                        >Active</span
+                      >
+                    </td>
+                    <td class="p-4">
+                      <div class="flex justify-center gap-3 text-lg">
+                        <i
+                          class="fas fa-eye text-pasifik hover:scale-125 cursor-pointer"
+                        ></i>
+                        <i
+                          class="fas fa-edit text-langit hover:scale-125 cursor-pointer"
+                        ></i>
+                        <i
+                          class="fas fa-trash text-red-500 hover:scale-125 cursor-pointer"
+                        ></i>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- MODAL -->
+          <div
+            id="modalAdd"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-all duration-300"
+          >
+            <div
+              class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-300"
+            >
+              <div
+                class="bg-langit p-6 text-white flex justify-between items-center"
+              >
+                <h3 class="text-xl font-bold">Add New User</h3>
+                <button onclick="closeModal()">
+                  <i class="fas fa-times text-2xl"></i>
+                </button>
+              </div>
+
+              <form class="p-8 space-y-4">
+                <input
+                  type="text"
+                  placeholder="NIM"
+                  class="w-full px-4 py-3 border rounded-xl"
+                />
+                <input
+                  type="text"
+                  placeholder="Nama"
+                  class="w-full px-4 py-3 border rounded-xl"
+                />
+                <input
+                  type="text"
+                  placeholder="Kelas"
+                  class="w-full px-4 py-3 border rounded-xl"
+                />
+
+                <div class="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onclick="closeModal()"
+                    class="flex-1 py-3 border rounded-xl"
+                  >
+                    Cancel
+                  </button>
+                  <button class="flex-1 py-3 bg-pasifik text-white rounded-xl">
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   </body>
