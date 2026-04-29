@@ -138,23 +138,32 @@ export function renderAdminUsers() {
             <td class="p-4 text-sm font-semibold text-gray-700">
             <div class="flex items-center space-x-2">
                 <div class="w-12 h-12 rounded-full bg-[#3b8ea5]/20 text-[#3b8ea5] flex items-center justify-center font-bold">
-                    <img src="public/images/userPics/${current.payload.userPic}" alt="${current.payload.nama}" class="w-full h-full object-cover rounded-full">
+                    <img src="public/images/userPics/${current.payload.userPic}" alt="${current.payload.nama}" class="w-full h-full object-cover rounded-full border-2">
                 </div>
                 <div class="text-gray-700 font-lg flex flex-col">
                     ${current.payload.nama}
                     <div class="text-xs text-gray-500 font-normal">
-                        ${current.payload.kelas} | ID: ${current.id}
+                        ${current.payload.nim} | ${current.payload.kelas}
                     </div>
                 </div>
             </div>
             </td>
             <td class="p-4 text-center">
-                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold uppercase">${current.payload.role}</span>
-            </td>
+              <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold uppercase">${current.payload.role}</span>
             <td class="p-4 text-center">
-                <button class="btn-del-user text-red-500 hover:scale-125 transition-transform" data-id="${current.id}">
-                    <i class="fas fa-trash"></i>
-                </button>
+                <div class="flex justify-center gap-3 items-center">
+                    <button class="btn-view-user text-slate-400 hover:text-pasifik hover:scale-125 transition-transform" data-id="${current.payload.nim}">
+                        <i class="fas fa-eye text-lg"></i>
+                    </button>
+
+                    <button class="btn-edit-user text-slate-400 hover:text-langit hover:scale-125 transition-transform" data-id="${current.payload.nim}">
+                        <i class="fas fa-edit text-lg pointer-events-none"></i>
+                    </button>
+
+                    <button class="btn-del-user text-red-400 hover:text-red-600 hover:scale-125 transition-transform" data-id="${current.payload.nim}">
+                        <i class="fas fa-trash text-lg"></i>
+                    </button>
+                </div>
             </td>
         </tr>`;
         current = current.next;
@@ -164,21 +173,320 @@ export function renderAdminUsers() {
     <div class="max-w-7xl mx-auto bg-white p-6 rounded-2xl shadow-xl">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h2 class="text-2xl font-bold text-[#2d728f]">Users Management</h2>
-                <p class="text-gray-500 text-sm">Linear search pada Doubly Linked List</p>
+            <h2 class="text-2xl font-bold text-[#2d728f]">Users Management</h2>
+            <p class="text-gray-500 text-sm">Linear search pada Doubly Linked List</p>
+            </div>
+            <button
+            id="btnOpenModal"
+            class="bg-pasifik hover:bg-langit text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-md active:scale-95"
+            >
+            <i class="fas fa-plus"></i> Add User
+            </button>
+            <div
+            id="modalAdd"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden transition-all duration-300"
+            >
+            <div
+                class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-300"
+            >
+                <div class="bg-langit p-6 text-white flex justify-between items-center">
+                <h3 class="text-xl font-bold">Add New User</h3>
+                </div>
+                <form class="p-6 md:p-8 space-y-4" id="formAddUser">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-1"
+                    >Profile Picture</label
+                    >
+                    <input
+                    type="file"
+                    id="newUserPic"
+                    accept="image/*"
+                    required
+                    class="w-full px-4 py-2 border border-dashed border-slate-300 rounded-xl text-sm file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:bg-pasifik/10 file:text-pasifik cursor-pointer"
+                    />
+                </div>
+
+                <div class="flex p-1 bg-slate-100 rounded-2xl w-full">
+                    <button
+                    type="button"
+                    class="role-btn flex-1 py-2 text-sm font-bold rounded-xl transition-all text-slate-500"
+                    data-role="admin"
+                    >
+                    Admin
+                    </button>
+                    <button
+                    type="button"
+                    class="role-btn flex-1 py-2 text-sm font-bold rounded-xl transition-all bg-white text-pasifik shadow-sm"
+                    data-role="student"
+                    >
+                    Student
+                    </button>
+                    <input type="hidden" id="newRole" value="student" />
+                </div>
+
+                <div class="relative">
+                    <span
+                    class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"
+                    >
+                    <i class="fas fa-user-circle"></i>
+                    </span>
+                    <input
+                    type="text"
+                    id="newNama"
+                    placeholder="Nama Lengkap"
+                    required
+                    class="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-pasifik/20 focus:border-pasifik transition-all"
+                    />
+                </div>
+
+                <div id="mhsFields" class="grid grid-cols-2 gap-4">
+                    <div class="relative">
+                    <span
+                        class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"
+                    >
+                        <i class="fas fa-id-card"></i>
+                    </span>
+                    <input
+                        type="text"
+                        id="newNim"
+                        placeholder="NIM"
+                        required
+                        class="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-pasifik/20 focus:border-pasifik transition-all"
+                    />
+                    </div>
+                    <div class="relative">
+                    <span
+                        class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"
+                    >
+                        <i class="fas fa-graduation-cap"></i>
+                    </span>
+                    <input
+                        type="text"
+                        id="newKelas"
+                        placeholder="Kelas"
+                        required
+                        class="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-pasifik/20 focus:border-pasifik transition-all"
+                    />
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <span
+                    class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"
+                    >
+                    <i class="fas fa-lock"></i>
+                    </span>
+                    <input
+                    type="password"
+                    id="newPassword"
+                    placeholder="Password"
+                    required
+                    class="w-full pl-10 pr-10 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-pasifik/20 focus:border-pasifik transition-all"
+                    />
+                    <button
+                    type="button"
+                    class="toggle-password absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-pasifik"
+                    >
+                    <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <div class="relative">
+                    <span
+                    class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"
+                    >
+                    <i class="fas fa-check-double"></i>
+                    </span>
+                    <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="Konfirmasi Password"
+                    required
+                    class="w-full pl-10 pr-10 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-pasifik/20 focus:border-pasifik transition-all"
+                    />
+                    <button
+                    type="button"
+                    class="toggle-password absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-pasifik"
+                    >
+                    <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button
+                    type="button"
+                    id="btnCloseModal"
+                    class="flex-1 py-3 border border-slate-200 text-slate-500 rounded-xl hover:bg-slate-50 font-semibold transition-all"
+                    >
+                    Cancel
+                    </button>
+                    <button
+                    type="submit"
+                    class="flex-1 py-3 bg-pasifik text-white rounded-xl font-bold shadow-lg shadow-pasifik/20 hover:bg-langit active:scale-95 transition-all"
+                    >
+                    Save User
+                    </button>
+                </div>
+                </form>
+            </div>
             </div>
         </div>
+
+        <div
+            id="modalDelete"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center hidden opacity-0 transition-all duration-300"
+        >
+            <div
+            class="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden transform scale-95 transition-all duration-300 p-8 text-center"
+            >
+            <div
+                class="w-20 h-20 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+                <i class="fas fa-exclamation-triangle text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">Hapus User?</h3>
+            <p class="text-slate-500 mb-8 text-sm">
+                Data akan dihapus permanen dari memori sistem (Node Doubly Linked List).
+            </p>
+            <div class="flex gap-3">
+                <button
+                type="button"
+                class="btn-close-delete flex-1 py-3 font-bold text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                Batal
+                </button>
+                <button
+                type="button"
+                id="btn-confirm-delete"
+                class="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold shadow-lg shadow-red-200 transition-all active:scale-95"
+                >
+                Ya, Hapus!
+                </button>
+            </div>
+            </div>
+        </div>
+
+        <div
+            id="modalViewUser"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center hidden opacity-0 transition-all duration-300"
+        >
+            <div
+            class="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden transform scale-95 transition-all duration-300 p-8"
+            >
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-pasifik">Detail User</h3>
+                <button
+                type="button"
+                class="btn-close-view text-slate-400 hover:text-red-500 transition-colors"
+                >
+                <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <div id="viewUserContent" class="space-y-4"></div>
+            <div class="mt-8 flex justify-end">
+                <button
+                type="button"
+                class="btn-close-view px-6 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-colors"
+                >
+                Tutup
+                </button>
+            </div>
+            </div>
+        </div>
+
+        <div
+            id="modalEdit"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center hidden opacity-0 transition-all duration-300"
+        >
+            <div
+            class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden transform scale-95 transition-all duration-300"
+            >
+            <div class="bg-pasifik p-6 text-white flex justify-between items-center">
+                <h3 class="text-xl font-bold">Edit User Profile</h3>
+                <button type="button" class="btn-close-edit">
+                <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <form id="formEditUser" class="p-8 space-y-5">
+            <div class="flex justify-center mb-2">
+                <div class="relative group">
+                    <img id="edit_preview_foto" src="images/userPics/default.png" 
+                         class="w-24 h-24 rounded-full object-cover border-4 border-slate-100 shadow-md">
+                    <label for="edit_input_file" class="absolute bottom-0 right-0 bg-pasifik text-white p-2 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-lg border-2 border-white">
+                        <i class="fas fa-camera text-xs"></i>
+                        <input type="file" id="edit_input_file" accept="image/png, image/jpeg, image/jpg" class="hidden">
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex bg-slate-100 p-1.5 rounded-2xl gap-1">
+                <button type="button" id="btn_role_admin" onclick="switchEditRole('Admin')" 
+                        class="flex-1 py-2 rounded-xl text-sm font-bold transition-all duration-200">Admin</button>
+                <button type="button" id="btn_role_student" onclick="switchEditRole('Student')" 
+                        class="flex-1 py-2 rounded-xl text-sm font-bold transition-all duration-200">Student</button>
+                <input type="hidden" id="edit_role">
+            </div>
+
+            <div class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black text-pasifik ml-1 tracking-widest uppercase">Nama Lengkap</label>
+                    <div class="relative">
+                        <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="edit_nama" required
+                               class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-pasifik outline-none transition-all">
+                    </div>
+                </div>
+
+                <div id="container_edit_nim" class="space-y-1">
+                    <label class="text-[10px] font-black text-pasifik ml-1 tracking-widest uppercase">NIM (ID)</label>
+                    <div class="relative">
+                        <i class="fas fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="edit_nim" readonly
+                               class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-500 cursor-not-allowed outline-none">
+                    </div>
+                </div>
+
+                <div id="container_edit_kelas" class="space-y-1">
+                    <label class="text-[10px] font-black text-pasifik ml-1 tracking-widest uppercase">Kelas</label>
+                    <div class="relative">
+                        <i class="fas fa-graduation-cap absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="edit_kelas"
+                               class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-pasifik outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4 pt-4">
+                <button type="button" class="btn-close-edit flex-1 py-3.5 font-bold text-slate-400 hover:text-slate-600 transition-colors">
+                    Batal
+                </button>
+                <button type="submit" class="flex-1 py-3.5 bg-pasifik text-white rounded-2xl font-bold shadow-lg shadow-pasifik/30 hover:brightness-110 active:scale-95 transition-all">
+                    Simpan Perubahan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
         <div class="overflow-x-auto rounded-xl border border-gray-100">
             <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-[#3b8ea5] text-white">
-                        <th class="p-4 text-xs font-semibold uppercase">No</th>
-                        <th class="p-4 text-xs font-semibold uppercase">User</th>
-                        <th class="p-4 text-xs font-semibold uppercase text-center">Role</th>
-                        <th class="p-4 text-xs font-semibold uppercase text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>${rows || `<tr><td colspan="5" class="text-center p-4">Data Kosong</td></tr>`}</tbody>
+            <thead>
+                <tr class="bg-[#3b8ea5] text-white">
+                <th class="p-4 text-xs font-semibold uppercase">No</th>
+                <th class="p-4 text-xs font-semibold uppercase">User</th>
+                <th class="p-4 text-xs font-semibold uppercase text-center">Role</th>
+                <th class="p-4 text-xs font-semibold uppercase text-center">
+                    Action
+                </th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows || `
+                <tr>
+                <td colspan="5" class="text-center p-4">Data Kosong</td>
+                </tr>
+                `}
+            </tbody>
             </table>
         </div>
     </div>
@@ -190,43 +498,276 @@ export function renderAdminAttendance() {
     let current = db.attendance.head;
 
     while (current) {
-        const student = db.users.findWhere('nim', current.payload.nim);
+        const student = db.users.findWhere('nim', current.payload.id_mahasiswa);
         const studentName = student ? student.payload.nama : 'Unknown';
+
+        let locName = current.payload.id_lokasi;
+        if (locName && locName !== "-") {
+            const locObj = db.locations.find(l => l.id === locName || l.id === locName.replace('-',''));
+            if (locObj) locName = locObj.name;
+        }
+
+        // --- PARSING CREATED AT & UPDATED AT ---
+        let dateStr = "-";
+        let timeStr = "-";
+        let updatedHtml = "";
+        
+        if (current.payload.created_at) {
+            const dateObj = new Date(current.payload.created_at);
+            dateStr = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+            timeStr = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        if (current.payload.updated_at) {
+            const updDateObj = new Date(current.payload.updated_at);
+            // Hanya tampilkan jika jam/tanggal updated berbeda dengan created (sudah pernah diedit)
+            if (current.payload.updated_at !== current.payload.created_at) {
+                const updTime = updDateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                const updDate = updDateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
+                updatedHtml = `<div class="text-[10px] text-[#3b8ea5] font-semibold mt-1 bg-blue-50 inline-block px-1 rounded">Upd: ${updDate} ${updTime}</div>`;
+            }
+        }
+
+        let attColor = 'bg-gray-100 text-gray-700';
+        const attType = current.payload.attendance?.toLowerCase() || '';
+        if (attType === 'present') attColor = 'bg-blue-100 text-blue-700';
+        else if (attType === 'sick') attColor = 'bg-yellow-100 text-yellow-700';
+        else if (attType === 'permit') attColor = 'bg-purple-100 text-purple-700';
+        else if (attType === 'absent') attColor = 'bg-red-100 text-red-700';
+
+        let statusColor = 'bg-gray-100 text-gray-700';
+        const status = current.payload.status || '';
+        if (status === 'Approved' || status === 'On Time') statusColor = 'bg-green-100 text-green-700';
+        else if (status === 'Pending') statusColor = 'bg-yellow-100 text-yellow-700';
+        else if (status === 'Rejected') statusColor = 'bg-red-100 text-red-700';
 
         rows += `
         <tr class="hover:bg-gray-50 transition-colors border-b border-gray-50">
-            <td class="p-4 text-sm font-semibold">${current.payload.nim}</td>
-            <td class="p-4 text-sm">${studentName}</td>
-            <td class="p-4 text-sm">${current.payload.date}</td>
-            <td class="p-4 text-sm text-center">${current.payload.status}</td>
-            <td class="p-4 text-sm text-center">${current.payload.notes}</td>
+            <td class="p-4 text-sm whitespace-nowrap">
+                <div class="font-semibold text-gray-800">${dateStr}</div>
+                <div class="text-xs text-gray-500">In: ${timeStr}</div>
+                ${updatedHtml}
+            </td>
+            <td class="p-4 text-sm">
+                <div class="font-semibold text-gray-800">${studentName}</div>
+                <div class="text-xs text-gray-500">NIM: ${current.payload.id_mahasiswa}</div>
+            </td>
+            <td class="p-4 text-sm">
+              <div class="flex flex-col items-start gap-1">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${attColor}">${current.payload.attendance || '-'}</span>
+                <span class="text-xs text-gray-500 whitespace-nowrap"><i class="fas fa-map-marker-alt"></i> ${locName}</span>
+              </div>
+            </td>
+            <td class="p-4 text-sm text-center">
+                <span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${status}</span>
+            </td>
+            <td class="p-4 text-sm text-gray-600 max-w-[150px] truncate" title="${current.payload.notes || ''}">
+                ${current.payload.notes || '-'}
+            </td>
+            <td class="p-4 text-sm text-center">            
+                ${status === 'Pending' ? `
+                <button class="btn-approvement-att text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors font-medium shadow-sm" data-id="${current.payload.id}">
+                    Approve
+                </button>
+                ` :
+                `<button class="btn-detail-att text-slate-400 hover:text-pasifik hover:scale-125 transition-transform" data-id="${current.payload.id}">
+                    <i class="fas fa-eye text-lg"></i>
+                </button>
+                <button class="btn-edit-att text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors font-medium shadow-sm" data-id="${current.payload.id}">
+                    <i class="fas fa-edit"></i>
+                </button>`
+            }
+            </td>
         </tr>`;
+        
         current = current.next;
     }
 
+    const usersList = [];
+    let uNode = db.users.head;
+    while (uNode) {
+        if (uNode.payload.role === 'student') {
+            usersList.push(`<option value="${uNode.payload.nim}">${uNode.payload.nama} (${uNode.payload.nim})</option>`);
+        }
+        uNode = uNode.next;
+    }
+
+    const locationsList = db.locations.map(loc => 
+        `<option value="${loc.id}">${loc.name}</option>`
+    ).join('');
+
     return `
-    <div class="max-w-7xl mx-auto bg-white p-6 rounded-2xl shadow-xl">
+    <div class="max-w-7xl mx-auto bg-white p-6 rounded-2xl shadow-xl relative">
         <div class="flex justify-between items-center mb-8">
             <div>
                 <h2 class="text-2xl font-bold text-[#2d728f]">Attendance Records</h2>
             </div>
-            <button id="btn-generate-absent" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-md transition-all">
-                <i class="fas fa-magic"></i> Generate Absent
-            </button>
+            
+            <div class="flex gap-3">
+                <button id="btn-create-attendance" class="bg-[#3b8ea5] hover:bg-[#2d728f] text-white px-6 py-2.5 rounded-xl font-bold shadow-md transition-all">
+                    <i class="fas fa-plus"></i> Create Attendance
+                </button>
+                <button id="btn-generate-absent" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-md transition-all">
+                    <i class="fas fa-magic"></i> Generate Absent
+                </button>
+            </div>
         </div>
+        
         <div class="overflow-x-auto rounded-xl border border-gray-100">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-[#3b8ea5] text-white">
-                        <th class="p-4 text-xs font-semibold uppercase">NIM</th>
+                        <th class="p-4 text-xs font-semibold uppercase">Date & Time</th>
                         <th class="p-4 text-xs font-semibold uppercase">Student</th>
-                        <th class="p-4 text-xs font-semibold uppercase">Date</th>
+                        <th class="p-4 text-xs font-semibold uppercase">Attendance Info</th>
                         <th class="p-4 text-xs font-semibold uppercase text-center">Status</th>
-                        <th class="p-4 text-xs font-semibold uppercase text-center">Notes</th>
+                        <th class="p-4 text-xs font-semibold uppercase">Notes</th>
+                        <th class="p-4 text-xs font-semibold uppercase text-center">Action</th>
                     </tr>
                 </thead>
-                <tbody id="attendance-tbody">${rows || `<tr><td colspan="5" class="text-center p-4">Belum ada presensi</td></tr>`}</tbody>
+                <tbody id="attendance-tbody">${rows || `<tr><td colspan="6" class="text-center p-4">Belum ada presensi</td></tr>`}</tbody>
             </table>
+        </div>
+
+        <div id="modalCreateAttendance" class="fixed inset-0 bg-black/50 z-50 hidden flex-col items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+            <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-95 p-6">
+                <div class="flex justify-between items-center mb-5">
+                    <h3 class="text-xl font-bold text-[#2d728f]">Create New Attendance</h3>
+                    <button type="button" id="btnCloseCreateModal" class="text-gray-400 hover:text-red-500 transition-colors"><i class="fas fa-times text-xl"></i></button>
+                </div>
+                <form id="formCreateAttendance" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Student</label>
+                            <select id="attStudentNim" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#3b8ea5]" required>
+                                <option value="" disabled selected>Select Student</option>
+                                ${usersList.join('')}
+                            </select>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Location</label>
+                            <select id="attLocationId" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#3b8ea5]" required>
+                                <option value="-">No Location (-)</option>
+                                ${locationsList}
+                            </select>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Type</label>
+                            <select id="attType" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#3b8ea5]" required>
+                                <option value="present">Present</option>
+                                <option value="absent">Absent</option>
+                                <option value="sick">Sick</option>
+                                <option value="permit">Permit</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
+                            <select id="attStatus" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#3b8ea5]" required>
+                                <option value="Approved">Approved</option>
+                                <option value="On Time">On Time</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Notes</label>
+                            <textarea id="attNotes" rows="2" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#3b8ea5]" placeholder="Optional notes..."></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end gap-3">
+                        <button type="button" id="btnCancelCreate" class="px-5 py-2 rounded-xl text-gray-500 font-semibold hover:bg-gray-100 transition-colors">Cancel</button>
+                        <button type="submit" class="px-5 py-2 rounded-xl bg-[#3b8ea5] hover:bg-[#2d728f] text-white font-semibold shadow-md transition-all">Save Record</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="modalDetailAttendance" class="fixed inset-0 bg-black/50 z-50 hidden flex-col items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+            <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-95 p-6">
+                <div class="flex justify-between items-center mb-5">
+                    <h3 class="text-xl font-bold text-[#2d728f]">Attendance Details</h3>
+                    <button type="button" id="btnCloseDetailModal" class="text-gray-400 hover:text-red-500 transition-colors"><i class="fas fa-times text-xl"></i></button>
+                </div>
+                <div id="detailContent" class="space-y-4">
+                    <!-- Dynamic content will be injected here -->
+                </div>
+                <div class="mt-6 flex justify-end">
+                    <button type="button" id="btnCloseDetail" class="px-5 py-2 rounded-xl text-gray-500 font-semibold hover:bg-gray-100 transition-colors">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modalEditAttendance" class="fixed inset-0 bg-black/50 z-50 hidden flex-col items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+            <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-95 p-6">
+                <div class="flex justify-between items-center mb-5">
+                    <h3 class="text-xl font-bold text-[#2d728f]">Edit Attendance</h3>
+                    <button type="button" id="btnCloseEditModal" class="text-gray-400 hover:text-red-500 transition-colors"><i class="fas fa-times text-xl"></i></button>
+                </div>
+                <form id="formEditAttendance" class="space-y-4">
+                    <input type="hidden" id="editAttId">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Student <span class="text-xs font-normal text-gray-400">(Cannot be changed)</span></label>
+                            <input type="text" id="editStudentName" class="w-full px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg outline-none text-gray-500 cursor-not-allowed" readonly>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Location</label>
+                            <select id="editLocationId" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#3b8ea5]" required>
+                                <option value="-">No Location (-)</option>
+                                ${locationsList}
+                            </select>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Type</label>
+                            <select id="editType" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#3b8ea5]" required>
+                                <option value="present">Present</option>
+                                <option value="absent">Absent</option>
+                                <option value="sick">Sick</option>
+                                <option value="permit">Permit</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
+                            <select id="editStatus" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#3b8ea5]" required>
+                                <option value="Approved">Approved</option>
+                                <option value="On Time">On Time</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Notes</label>
+                            <textarea id="editNotes" rows="2" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#3b8ea5]"></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end gap-3">
+                        <button type="button" id="btnCancelEdit" class="px-5 py-2 rounded-xl text-gray-500 font-semibold hover:bg-gray-100 transition-colors">Cancel</button>
+                        <button type="submit" class="px-5 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white font-semibold shadow-md transition-all">Update Record</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="modalApproveAttendance" class="fixed inset-0 bg-black/50 z-50 hidden flex-col items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+            <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden transform transition-all scale-95 duration-200 p-8 text-center">
+                <input type="hidden" id="approveAttId"> 
+                
+                <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-check text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-2">Approve Attendance?</h3>
+                <p class="text-slate-500 mb-8 text-sm leading-relaxed">
+                    Apakah Anda yakin ingin menyetujui presensi ini? Tindakan ini akan mengubah status presensi menjadi <span class="font-bold text-green-600">"Approved"</span>.
+                </p>
+                <div class="flex gap-3 justify-center">
+                    <button type="button" id="btnCancelApprove" class="flex-1 py-3 rounded-xl text-gray-500 font-bold hover:bg-gray-100 transition-colors">
+                        No, Cancel
+                    </button>
+                    <button type="button" id="btnConfirmApprove" class="flex-1 py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold shadow-md shadow-green-200 transition-all active:scale-95">
+                        Yes, Approve!
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     `;
@@ -319,4 +860,191 @@ export function renderAdminLocation() {
             </div>
           </div>
     `;
+}
+
+export function renderAdminAnnouncements() {
+    return `
+    <div class="max-w-7xl mx-auto bg-white p-6 md:p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <div>
+                <h2 class="text-2xl font-extrabold text-[#2d728f] flex items-center gap-2">
+                    <i class="fas fa-bullhorn text-[#f49e4c]"></i> Kelola Pengumuman
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">Buat dan perbarui informasi untuk portal mahasiswa.</p>
+            </div>
+            <button id="btn-add-announcement" class="bg-[#3b8ea5] hover:bg-[#2d728f] text-white px-5 py-2.5 rounded-xl font-bold transition shadow-md flex items-center gap-2 active:scale-95">
+                <i class="fas fa-plus"></i> Buat Pengumuman
+            </button>
+        </div>
+
+        <div id="admin-announcement-list" class="space-y-4">
+            </div>
+    </div>
+
+    <div id="modal-announcement" class="hidden fixed inset-0 bg-gray-900/50 z-[100] flex items-center justify-center backdrop-blur-sm p-4 transition-opacity">
+        <div class="bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl relative transform transition-transform scale-95" id="modal-content-announcement">
+            <h3 id="modal-title" class="text-2xl font-extrabold text-gray-800 mb-6">Tambah Pengumuman</h3>
+            
+            <form id="form-announcement" class="space-y-5">
+                <input type="hidden" id="announcement-id" value="">
+                
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-2 uppercase tracking-wide">Kategori</label>
+                    <select id="announcement-category" class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:ring-[#3b8ea5] focus:border-[#3b8ea5] p-3 outline-none cursor-pointer">
+                        <option value="Akademik">Akademik</option>
+                        <option value="Penting">Penting</option>
+                        <option value="Umum">Umum</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-2 uppercase tracking-wide">Judul Pengumuman</label>
+                    <input type="text" id="announcement-title" required placeholder="Contoh: Jadwal UTS..." class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:ring-[#3b8ea5] focus:border-[#3b8ea5] p-3 outline-none transition">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-2 uppercase tracking-wide">Isi Pengumuman</label>
+                    <textarea id="announcement-content" required rows="5" placeholder="Tulis rincian informasi di sini..." class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:ring-[#3b8ea5] focus:border-[#3b8ea5] p-3 outline-none resize-none transition"></textarea>
+                </div>
+                
+                <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-100">
+                    <button type="button" id="btn-cancel-announcement" class="px-5 py-2.5 text-gray-500 font-bold hover:bg-gray-100 rounded-xl transition">Batal</button>
+                    <button type="submit" class="px-5 py-2.5 bg-[#f49e4c] hover:bg-[#e08b3a] text-white font-bold rounded-xl shadow-md transition flex items-center gap-2">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    `;
+}
+
+export function attachAdminAnnouncementEvents() {
+    if (!db.announcements) {
+        db.announcements = []; 
+    }
+
+    const listContainer = document.getElementById('admin-announcement-list');
+    const form = document.getElementById('form-announcement');
+    const modal = document.getElementById('modal-announcement');
+    const modalContent = document.getElementById('modal-content-announcement');
+    const btnAdd = document.getElementById('btn-add-announcement');
+    const btnCancel = document.getElementById('btn-cancel-announcement');
+    const modalTitle = document.getElementById('modal-title');
+
+    function renderList() {
+        if (db.announcements.length === 0) {
+            listContainer.innerHTML = `
+                <div class="text-center p-8 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl">
+                    <i class="fas fa-folder-open text-gray-300 text-4xl mb-3"></i>
+                    <p class="text-gray-500 font-medium text-sm">Belum ada pengumuman yang dibuat.</p>
+                </div>`;
+            return;
+        }
+
+        listContainer.innerHTML = db.announcements.slice().reverse().map(ann => {
+            let badgeStyle = ann.category === 'Penting' ? 'bg-red-50 text-[#ab3428] border-red-100' :
+                             ann.category === 'Akademik' ? 'bg-blue-50 text-[#2d728f] border-blue-100' :
+                             'bg-[#f5ee9e]/20 text-[#f49e4c] border-[#f5ee9e]/50';
+
+            return `
+            <div class="p-5 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row justify-between md:items-center gap-4 hover:shadow-md transition group">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="px-2.5 py-1 text-[10px] font-black rounded-md uppercase border ${badgeStyle}">${ann.category}</span>
+                        <span class="text-xs text-gray-400 font-medium"><i class="far fa-clock"></i> ${ann.date}</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 group-hover:text-[#3b8ea5] transition-colors">${ann.title}</h3>
+                    <p class="text-sm text-gray-500 mt-1 line-clamp-2">${ann.content}</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button data-id="${ann.id}" class="btn-edit px-3 py-2 bg-[#f5ee9e]/50 text-[#2d728f] font-bold text-xs rounded-xl hover:bg-[#f5ee9e] transition shadow-sm flex items-center gap-1">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button data-id="${ann.id}" class="btn-delete px-3 py-2 bg-red-50 text-red-500 font-bold text-xs rounded-xl hover:bg-red-500 hover:text-white transition shadow-sm flex items-center gap-1">
+                        <i class="fas fa-trash"></i> Hapus
+                    </button>
+                </div>
+            </div>
+            `;
+        }).join('');
+
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', (e) => openModal(e.currentTarget.dataset.id));
+        });
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => deleteAnnouncement(e.currentTarget.dataset.id));
+        });
+    }
+
+    function openModal(id = null) {
+        form.reset();
+        document.getElementById('announcement-id').value = '';
+        modalTitle.innerText = "Buat Pengumuman Baru";
+
+        if (id) {
+            const ann = db.announcements.find(a => a.id == id);
+            if (ann) {
+                modalTitle.innerText = "Edit Pengumuman";
+                document.getElementById('announcement-id').value = ann.id;
+                document.getElementById('announcement-category').value = ann.category;
+                document.getElementById('announcement-title').value = ann.title;
+                document.getElementById('announcement-content').value = ann.content;
+            }
+        }
+        
+        modal.classList.remove('hidden');
+        setTimeout(() => modalContent.classList.replace('scale-95', 'scale-100'), 10);
+    }
+
+    function saveToLocalStorage() {
+        localStorage.setItem('ae_announcements', JSON.stringify(db.announcements));
+    }
+
+    function closeModal() {
+        modalContent.classList.replace('scale-100', 'scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function saveAnnouncement(e) {
+        e.preventDefault();
+        const id = document.getElementById('announcement-id').value;
+        const category = document.getElementById('announcement-category').value;
+        const title = document.getElementById('announcement-title').value;
+        const content = document.getElementById('announcement-content').value;
+        const date = new Date().toISOString().split('T')[0]; 
+
+        if (id) {
+            const index = db.announcements.findIndex(a => a.id == id);
+            if (index > -1) {
+                db.announcements[index] = { id: parseInt(id), category, title, content, date };
+            }
+        } else {
+            const newId = db.announcements.length ? Math.max(...db.announcements.map(a => a.id)) + 1 : 1;
+            db.announcements.push({ id: newId, category, title, content, date });
+        }
+
+        closeModal();
+        renderList();
+        saveToLocalStorage();
+    }
+
+    function deleteAnnouncement(id) {
+        if (confirm("Apakah Anda yakin ingin menghapus pengumuman ini secara permanen?")) {
+            db.announcements = db.announcements.filter(a => a.id != id);
+
+            renderList();
+            saveToLocalStorage();
+        }
+    }
+
+    btnAdd.addEventListener('click', () => openModal());
+    btnCancel.addEventListener('click', closeModal);
+    form.addEventListener('submit', saveAnnouncement);
+
+    renderList();
+}
+
+export function attachAdminLocationEvents() {
 }

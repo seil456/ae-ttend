@@ -1,5 +1,4 @@
-export function AdminLayout(content, activeRoute = 'admin-dashboard') {
-    // Fungsi penentu class aktif/tidak aktif
+export function AdminLayout(content, activeRoute = 'admin-dashboard', user) {
     const navClass = (route) => activeRoute === route 
         ? "flex items-center px-4 py-3 bg-pasifik text-white rounded-xl shadow-md shadow-pasifik/30 transition-colors" 
         : "flex items-center px-4 py-3 hover:bg-pasifik/40 text-white/80 hover:text-white rounded-xl transition-all duration-200";
@@ -37,13 +36,39 @@ export function AdminLayout(content, activeRoute = 'admin-dashboard') {
             <svg class="${iconClass('admin-locations')}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             <span class="font-medium">Locations</span>
           </a>
+          <a href="#" data-route="admin-announcements" class="${navClass('admin-announcements')}">
+            <svg class="${iconClass('admin-announcements')}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 11v2a1 1 0 001 1h2l4 3V7L6 10H4a1 1 0 00-1 1zm13-3l3-2v12l-3-2M14 10v4"/></svg>            <span class="font-medium">announcements</span>
+          </a>
         </nav>
       </aside>
 
       <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
         <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-8 z-10 sticky top-0">
           <h1 class="text-xl font-bold text-langit">Halo, Admin!</h1>
-          <button data-route="login" class="text-red-500 font-bold"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          <div class="relative" id="profile-container">
+                <button id="profile-btn" class="flex items-center gap-3 bg-langit/10 hover:bg-langit/20 p-1.5 px-3 rounded-lg transition border border-transparent hover:border-langit/20">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-xs font-bold text-langit leading-none">${user.payload.nama}</p>
+                        <p class="text-[10px] text-gray-600 mt-1">${user.payload.role}</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-gray-200 border-2 border-langit shadow-sm overflow-hidden">
+                        <img src="public/images/userPics/${user.payload.userPic}" alt="Profile" />
+                    </div>
+                    <i class="fas fa-chevron-down text-langit/70 text-xs ml-1" id="profile-icon"></i>
+                </button>
+
+                <div id="profile-dropdown" data-route="profile" class="hidden absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50">
+                    <div class="p-2 space-y-1">
+                        <button class="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#3b8ea5]/10 hover:text-[#2d728f] rounded-xl transition flex items-center gap-3">
+                            <i class="fas fa-user-circle text-gray-400 text-xl"></i> Profil Saya
+                        </button>
+                        <div class="h-px bg-gray-100 my-1"></div>
+                        <button data-route="login" class="w-full text-left px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition flex items-center gap-3">
+                            <i class="fas fa-sign-out-alt"></i> Keluar
+                        </button>
+                    </div>
+                </div>
+            </div>
         </header>
         <main class="flex-1 overflow-y-auto p-8">
             ${content}
@@ -53,12 +78,13 @@ export function AdminLayout(content, activeRoute = 'admin-dashboard') {
     `;
 }
 
-export function StudentLayout(content, user) {
+export function StudentLayout(content, user, activeRoute = 'overview') {
     const nama = user?.payload?.nama || "Agisna F I";
     const nim = user?.payload?.nim || "225443028";
-    const avatarName = nama.split(' ').join('+');
-
-    initLayoutEvents();
+    
+    const navClass = (route) => activeRoute === route 
+        ? "nav-item text-white font-semibold border-b-2 border-[#f5ee9e] pb-1 transition-all duration-200" 
+        : "nav-item text-gray-300 hover:text-white hover:border-b-2 hover:border-white/30 pb-1 border-b-2 border-transparent transition-all duration-200";
     
     return `
     <div class="min-h-screen bg-gray-50 flex flex-col">
@@ -69,9 +95,9 @@ export function StudentLayout(content, user) {
             </div>
 
             <nav class="hidden md:flex items-center gap-8 nav-menu">
-                <button data-route="overview" class="nav-item text-white font-semibold border-b-2 border-[#f5ee9e] pb-1">Overview</button>
-                <button data-route="presensi" class="nav-item text-gray-300 hover:text-white transition">Presensi</button>
-                <button data-route="announcement" class="nav-item text-gray-300 hover:text-white transition">Announcement</button>
+                <button data-route="overview" class="${navClass('overview')}">Overview</button>
+                <button data-route="presensi" class="${navClass('presensi')}">Presensi</button>
+                <button data-route="announcement" class="${navClass('announcement')}">Announcement</button>
             </nav>
 
             <div class="relative" id="profile-container">
@@ -86,11 +112,7 @@ export function StudentLayout(content, user) {
                     <i class="fas fa-chevron-down text-white/70 text-xs ml-1" id="profile-icon"></i>
                 </button>
 
-                <div id="profile-dropdown" class="hidden absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50">
-                    <div class="p-4 border-b border-gray-50 bg-gray-50/50">
-                        <p class="text-sm font-bold text-gray-800 truncate">${nama}</p>
-                        <p class="text-xs text-gray-500 font-mono mt-1">${nim}</p>
-                    </div>
+                <div id="profile-dropdown" data-route="profile" class="hidden absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50">
                     <div class="p-2 space-y-1">
                         <button class="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#3b8ea5]/10 hover:text-[#2d728f] rounded-xl transition flex items-center gap-3">
                             <i class="fas fa-user-circle text-gray-400"></i> Profil Saya
@@ -110,19 +132,18 @@ export function StudentLayout(content, user) {
     `;
 }
 
-export function initLayoutEvents(user) {
+let isLayoutEventsInitialized = false;
+
+export function initLayoutEvents() {
+    if (isLayoutEventsInitialized) return;
+
     document.addEventListener('click', (e) => {
         const targetRoute = e.target.closest('[data-route]');
         
         if (targetRoute) {
             const route = targetRoute.getAttribute('data-route');
-  
-            if (route === 'login') {
-                window.location.reload();
-                return;
-            }
-
-            navigate(route, user);
+            
+            window.dispatchEvent(new CustomEvent('app-navigate', { detail: route }));
         }
 
         const profileBtn = e.target.closest('#profile-btn');
@@ -134,6 +155,37 @@ export function initLayoutEvents(user) {
             dropdown?.classList.add('hidden');
         }
     });
+
+    setInterval(() => {
+        const now = new Date();
+        
+        const clockText = document.getElementById('realtime-clock-text');
+        if (clockText) {
+            clockText.innerText = now.toLocaleTimeString('id-ID', { 
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            });
+        }
+
+        const hourHand = document.getElementById('hour-hand');
+        const minuteHand = document.getElementById('minute-hand');
+        const secondHand = document.getElementById('second-hand');
+
+        if (hourHand && minuteHand && secondHand) {
+            const seconds = now.getSeconds();
+            const mins = now.getMinutes();
+            const hours = now.getHours();
+
+            const secDeg = seconds * 6;
+            const minDeg = (mins * 6) + (seconds * 0.1); 
+            const hourDeg = ((hours % 12) * 30) + (mins * 0.5); 
+
+            secondHand.style.transform = `translateX(-50%) rotate(${secDeg}deg)`;
+            minuteHand.style.transform = `translateX(-50%) rotate(${minDeg}deg)`;
+            hourHand.style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+        }
+    }, 1000);
+
+    isLayoutEventsInitialized = true;
 }
 
 export function LoginLayout() {
@@ -184,3 +236,380 @@ export function LoginLayout() {
     </div>
     `;
 } 
+
+export function profileLayout(user) {
+    const nama = user?.payload?.nama || "Aje Gile";
+    const nim = user?.payload?.nim || "1234567890";
+    const email = user?.payload?.email || "aje.gile@mahasiswa.univ.ac.id";
+    const tanggalLahir = user?.payload?.tanggalLahir || "2002-05-15";
+    const noTelp = user?.payload?.noTelp || "081234567890";
+    const jenisKelamin = user?.payload?.jenisKelamin || "L";
+
+    const getInitials = (name) => {
+        return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    };
+    const initials = getInitials(nama);
+
+    return `
+    <style>
+        /* Scoped CSS khusus untuk halaman profil agar tidak bocor ke layout lain */
+        .profile-wrapper {
+            --primary-teal: #266d84;
+            --secondary-teal: #1e586b;
+            --accent-yellow: #f8df72;
+            --bg-light: #f5f8fa;
+            --text-dark: #1f333f;
+            --text-gray: #6b7a85;
+            --white: #ffffff;
+            --border-color: #e5e9eb;
+            --input-bg: #f9fafb;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative; /* Penting untuk tombol absolut */
+        }
+
+        .profile-wrapper .content-container {
+            width: 100%;
+            max-width: 900px;
+            margin-top: -60px; /* PERUBAHAN: Menggeser card sedikit ke atas */
+        }
+
+        .profile-wrapper .btn-back {
+            /* PERUBAHAN: Memindahkan posisi ke kiri atas */
+            position: absolute;
+            top: 40px;
+            left: 60px; /* Jarak dari kiri, tidak terlalu di ujung */
+            
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px; /* PERUBAHAN: Diperbesar sedikit dari 18px */
+            color: var(--primary-teal);
+            font-weight: 700;
+            text-decoration: none;
+            transition: color 0.2s ease;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .profile-wrapper .btn-back:hover {
+            color: var(--secondary-teal);
+        }
+
+        .profile-wrapper .card {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            padding: 30px;
+            border-top: 4px solid var(--primary-teal);
+        }
+
+        .profile-wrapper .profile-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .profile-wrapper .profile-summary-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-wrapper .avatar-large {
+            width: 70px;
+            height: 70px;
+            background-color: var(--accent-yellow);
+            color: var(--primary-teal);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 24px;
+            border: 2px solid var(--border-color);
+        }
+
+        .profile-wrapper .profile-name h2 {
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .profile-wrapper .profile-name p {
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        .profile-wrapper .btn-edit {
+            background-color: var(--primary-teal);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .profile-wrapper .btn-edit:hover {
+            background-color: var(--secondary-teal);
+        }
+
+        .profile-wrapper .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .profile-wrapper .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .profile-wrapper .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .profile-wrapper .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-dark);
+            transition: 0.2s;
+            outline: none;
+        }
+
+        .profile-wrapper .form-control:focus {
+            border-color: var(--primary-teal);
+            background-color: var(--white);
+            box-shadow: 0 0 0 3px rgba(38, 109, 132, 0.1);
+        }
+
+        .profile-wrapper select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7a85' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 16px) center;
+            padding-right: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .profile-wrapper .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .profile-wrapper .btn-back {
+                top: 20px;
+                left: 20px; /* Penyesuaian jarak di layar kecil/HP */
+            }
+        }
+    </style>
+
+    <div class="profile-wrapper">
+        
+        <button data-route="overview" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard
+        </button>
+
+        <div class="content-container">
+            <div class="card">
+                <div class="profile-summary">
+                    <div class="profile-summary-left">
+                        <div class="avatar-large">${initials}</div>
+                        <div class="profile-name">
+                            <h2>${nama}</h2>
+                            <p>${email}</p>
+                        </div>
+                    </div>
+                    <button class="btn-edit" id="btnRegisterFace" data-route="register-face">Register Face</button>
+                    <button class="btn-edit" data-route="profile">Edit Profil</button>
+                </div>
+
+                <form class="profile-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="nama">Nama Lengkap</label>
+                            <input type="text" id="nama" class="form-control" value="${nama}" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nim">NIM</label>
+                            <input type="text" id="nim" class="form-control" value="${nim}" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jenis_kelamin">Jenis Kelamin</label>
+                            <select id="jenis_kelamin" class="form-control" disabled>
+                                <option value="L" ${jenisKelamin === 'L' ? 'selected' : ''}>Laki-laki</option>
+                                <option value="P" ${jenisKelamin === 'P' ? 'selected' : ''}>Perempuan</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tanggal_lahir">Tanggal Lahir</label>
+                            <input type="date" id="tanggal_lahir" class="form-control" value="${tanggalLahir}" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Alamat Email</label>
+                            <input type="email" id="email" class="form-control" value="${email}" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="no_telp">No. Telepon / WhatsApp</label>
+                            <input type="tel" id="no_telp" class="form-control" value="${noTelp}" readonly>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    `;
+}
+
+export function RegisterFaceLayout(user) {
+    return `
+    <style>
+        .camera-wrapper {
+            --primary-teal: #266d84;
+            --bg-light: #f5f8fa;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .camera-wrapper .btn-back {
+            position: absolute;
+            top: 40px;
+            left: 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            color: var(--primary-teal);
+            font-weight: 700;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .camera-card {
+            width: 100%;
+            max-width: 500px;
+            margin-top: -40px;
+            padding: 30px;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid var(--primary-teal);
+        }
+
+        .camera-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            margin: 20px 0;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #000;
+        }
+
+        .camera-container video,
+        .camera-container canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Video di-flip horizontal agar seperti cermin */
+        #vid {
+            transform: scaleX(-1);
+            filter: contrast(1.2) brightness(1.1) sepia(0.2) grayscale(0.1) saturate(1.3) hue-rotate(10deg);
+        }
+
+        #overlay { z-index: 2; pointer-events: none; }
+        #scanCanvas { z-index: 3; pointer-events: none; }
+
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-teal);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .camera-wrapper .btn-back { top: 20px; left: 20px; }
+        }
+    </style>
+
+    <div class="camera-wrapper">
+        <button data-route="profile" class="btn-back" id="btn-back-camera">
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Profil
+        </button>
+
+        <div class="camera-card">
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-2">Registrasi Wajah</h2>
+            <p class="text-sm text-gray-500 text-center mb-4">Posisikan wajahmu di tengah bingkai kamera.</p>
+            
+            <div class="camera-container">
+                <video id="vid" autoplay muted playsinline></video>
+                <canvas id="overlay"></canvas>
+                <canvas id="scanCanvas"></canvas>
+                <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+
+            <button id="registerBtn" disabled class="w-full py-3 bg-[#266d84] hover:bg-[#1e586b] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors">
+                Mulai Registrasi Wajah
+            </button>
+            <div id="registerStatus" class="mt-4 p-3 rounded-lg text-center text-sm font-medium hidden"></div>
+        </div>
+    </div>
+    `;
+}
