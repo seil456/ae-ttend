@@ -83,7 +83,7 @@ export async function attachFaceRegistrationEvents(user) {
     scanCanvas.height = videoEl.videoHeight;
 
     function draw() {
-      if (!getEl("scanCanvas")) return; 
+      if (!getEl("scanCanvas")) return;
       ctx.clearRect(0, 0, scanCanvas.width, scanCanvas.height);
       ctx.beginPath();
       ctx.strokeStyle = "rgba(255, 0, 0, 0.7)";
@@ -198,7 +198,7 @@ export async function attachFaceRegistrationEvents(user) {
 
   setTimeout(async () => {
     const registerBtn = getEl("registerBtn");
-    if (!registerBtn) return; 
+    if (!registerBtn) return;
 
     await loadModels();
     await startCamera();
@@ -307,7 +307,7 @@ export function renderStudentDashboard(user) {
     return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
   });
 
-  let activeWorkingDays = 1; 
+  let activeWorkingDays = 1;
 
   if (thisMonthData.length > 0) {
     const firstEntryDate = new Date(
@@ -392,7 +392,7 @@ export function renderStudentDashboard(user) {
     }
   }
 
-  const recentTimeline = attendanceData.slice(0, 2); 
+  const recentTimeline = attendanceData.slice(0, 2);
   let timelineHTML = "";
   if (recentTimeline.length === 0) {
     timelineHTML = `<p class="text-sm text-gray-500 py-4">Belum ada riwayat presensi.</p>`;
@@ -407,7 +407,7 @@ export function renderStudentDashboard(user) {
         });
         const type = (att.attendance || "").toLowerCase();
 
-        let color = "green"; 
+        let color = "green";
         let icon = "fa-sign-in-alt";
         let title = "Check In Successful";
         let badgeText = att.status || "On Time";
@@ -473,161 +473,200 @@ export function renderStudentDashboard(user) {
 
   return `
     <div class="flex flex-col xl:flex-row gap-8">
-        <div class="flex-1 space-y-8">
-            
-            <div class="bg-[#2d728f] rounded-3xl p-8 flex items-center text-white relative overflow-hidden shadow-xl border border-gray-200 group">
-                <div class="absolute top-[-50px] right-[-50px] w-64 h-64 bg-white/10 rounded-full blur-3xl z-0 pointer-events-none group-hover:scale-110 transition-transform duration-700"></div>
-                <div class="absolute bottom-6 left-1/4 w-8 h-8 border-[3px] border-white/10 rounded-full z-0 pointer-events-none"></div>
-                <div class="absolute top-8 left-1/2 text-white/20 text-2xl font-black rotate-12 z-0 pointer-events-none">+</div>
-                <div class="absolute bottom-10 right-1/4 w-3 h-3 bg-[#f49e4c]/50 rounded-full z-0 pointer-events-none"></div>
+      <div class="flex-1 space-y-8">
 
-                <div class="z-10 flex flex-col md:flex-row items-start md:items-center gap-10 lg:gap-16 w-full">
-                    <div class="flex-1">
-                        <span class="px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold tracking-wider text-[#f5ee9e] border border-white/20 backdrop-blur-sm mb-3 inline-block">STUDENT PORTAL</span>
-                        <h2 class="text-xl opacity-90 text-white mt-2">Welcome back,</h2>
-                        <h1 class="text-4xl font-extrabold mt-1 tracking-tight">${nama}</h1>
-                        
-                        <div class="mt-5 inline-flex flex-wrap items-center gap-2 bg-white/10 px-4 py-2 rounded-full border border-white/20 backdrop-blur-md shadow-sm">
-                            <i class="fas fa-id-card text-[#f5ee9e]"></i>
-                            <span class="text-[#f5ee9e] font-mono text-sm tracking-wide">
-                                ${nim} 
-                                <span class="mx-2 text-white/40">|</span> 
-                                <span class="font-sans font-semibold text-white/90">${kelas}</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
+        <div
+          class="bg-[#2d728f] rounded-3xl p-8 flex items-center text-white relative overflow-hidden shadow-xl border border-gray-200 group">
+          <div
+            class="absolute top-[-50px] right-[-50px] w-64 h-64 bg-white/10 rounded-full blur-3xl z-0 pointer-events-none group-hover:scale-110 transition-transform duration-700">
+          </div>
+          <div class="absolute bottom-6 left-1/4 w-8 h-8 border-[3px] border-white/10 rounded-full z-0 pointer-events-none">
+          </div>
+          <div class="absolute top-8 left-1/2 text-white/20 text-2xl font-black rotate-12 z-0 pointer-events-none">+</div>
+          <div class="absolute bottom-10 right-1/4 w-3 h-3 bg-[#f49e4c]/50 rounded-full z-0 pointer-events-none"></div>
+
+          <div class="z-10 flex flex-col md:flex-row items-start md:items-center gap-10 lg:gap-16 w-full">
+            <div class="flex-1">
+              <span
+                class="px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold tracking-wider text-[#f5ee9e] border border-white/20 backdrop-blur-sm mb-3 inline-block">STUDENT
+                PORTAL</span>
+              <h2 class="text-xl opacity-90 text-white mt-2">Welcome back,</h2>
+              <h1 class="text-4xl font-extrabold mt-1 tracking-tight">${nama}</h1>
+
+              <div
+                class="mt-5 inline-flex flex-wrap items-center gap-2 bg-white/10 px-4 py-2 rounded-full border border-white/20 backdrop-blur-md shadow-sm">
+                <i class="fas fa-id-card text-[#f5ee9e]"></i>
+                <span class="text-[#f5ee9e] font-mono text-sm tracking-wide">
+                  ${nim}
+                  <span class="mx-2 text-white/40">|</span>
+                  <span class="font-sans font-semibold text-white/90">${kelas}</span>
+                </span>
+              </div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-[#3b8ea5] p-6 rounded-3xl shadow-[0_8px_30px_rgb(59,142,165,0.3)] flex flex-col relative overflow-hidden group">
-                    <div class="absolute top-6 right-[-20px] w-32 h-10 bg-white/10 rounded-2xl backdrop-blur-sm"></div>
-                    <div class="absolute bottom-6 right-6 w-12 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md shadow-sm border border-white/20">
-                        <i class="fas fa-check text-white text-lg drop-shadow-md"></i>
-                    </div>
-
-                    <h3 class="font-bold text-white/70 text-xs tracking-widest uppercase mb-4 relative z-10">Clock In Status</h3>
-                    <div class="flex items-end gap-2 mb-2 relative z-10">
-                        <span class="text-4xl font-extrabold text-white leading-none drop-shadow-sm">${clockInTime}</span>
-                        <span class="text-sm font-bold text-white/80 mb-1">${clockInAmPm}</span>
-                    </div>
-                    <div class="mt-auto pt-4 relative z-10">
-                        <span class="inline-block px-3 py-1 bg-white/20 text-white text-[10px] font-bold rounded-full uppercase tracking-wide border border-white/30 backdrop-blur-sm shadow-sm">${clockInStatus}</span>
-                    </div>
-                </div>
-                
-                <div class="bg-white p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex flex-col items-center hover:shadow-lg transition-shadow">
-                    <h3 class="font-bold text-gray-500 text-xs tracking-widest uppercase self-start w-full mb-2">Monthly Rate</h3>
-                    <div class="relative flex items-center justify-center mt-2 flex-1 w-full">
-                        
-                        <div class="relative w-24 h-24 rounded-full flex items-center justify-center" 
-                            style="background: conic-gradient(#f49e4c ${monthlyRatePercentage}%, #f3f4f6 0);">
-                            
-                            <div class="absolute inset-0 m-[10px] bg-white rounded-full"></div>
-                            
-                            <span class="text-2xl font-black text-gray-800 z-10">${monthlyRatePercentage}<span class="text-sm text-gray-400">%</span></span>
-                        </div>
-                    </div>
-                    <p class="text-[10px] font-bold text-gray-400 mt-3 bg-gray-50 px-3 py-1 rounded-full">${totalPresentDays} of ${activeWorkingDays} Days</p>
-                </div>
-                
-                <div class="relative bg-gray-900 p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden flex flex-col justify-end group min-h-[180px] cursor-pointer">
-                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-gray-200 opacity-60 group-hover:scale-110 transition-transform duration-700"></div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#2d728f] via-[#2d728f]/60 to-transparent"></div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <h3 class="text-white/80 text-[10px] font-bold tracking-widest uppercase mb-1 drop-shadow-md">Last Location</h3>
-                                <p class="text-white font-bold text-sm leading-tight drop-shadow-md">${lastLocationName}<br><span class="font-normal text-xs text-[#f5ee9e]">${lastLocationSub}</span></p>
-                            </div>
-                            <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30 group-hover:bg-white group-hover:text-[#2d728f] transition-colors shadow-lg">
-                                <i class="fas fa-location-arrow"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
-                <div class="flex justify-between items-center mb-8">
-                    <h3 class="font-bold text-gray-800 text-lg">Timeline History</h3>
-                    <a href="#" class="text-xs font-bold px-4 py-2 bg-[#3b8ea5]/10 text-[#3b8ea5] rounded-full hover:bg-[#3b8ea5] hover:text-white transition-colors">View all</a>
-                </div>
-                
-                <div class="relative pl-6 border-l-2 border-gray-100 space-y-8 mt-2 ml-2">
-                    ${timelineHTML}
-                </div>
-            </div>
+          </div>
         </div>
 
-        <aside class="w-full xl:w-[350px] flex flex-col gap-8">
-            
-            <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
-                <div class="flex justify-between items-center mb-6">
-                    <div id="calendar-header">
-                        <span class="text-sm font-bold text-gray-800" id="month-date-display">${currentDate.toLocaleString("en-US", { month: "long", year: "numeric" })}</span>
-                    </div>
-                    <div class="flex gap-2 text-gray-400 font-bold">
-                        <button class="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition">&lt;</button>
-                        <button class="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition">&gt;</button>
-                    </div>
-                </div>
-                <div class="grid grid-cols-7 text-center text-xs font-bold tracking-wide text-[#f49e4c] mb-4">
-                    <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
-                </div>
-                <div id="calendar-days" class="grid grid-cols-7 text-center text-sm text-gray-600 gap-y-4"></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            class="bg-[#3b8ea5] p-6 rounded-3xl shadow-[0_8px_30px_rgb(59,142,165,0.3)] flex flex-col relative overflow-hidden group">
+            <div class="absolute top-6 right-[-20px] w-32 h-10 bg-white/10 rounded-2xl backdrop-blur-sm"></div>
+            <div
+              class="absolute bottom-6 right-6 w-12 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md shadow-sm border border-white/20">
+              <i class="fas fa-check text-white text-lg drop-shadow-md"></i>
             </div>
 
-            <div data-route="announcement" class="bg-gradient-to-br from-[#2d728f] to-slate-800 rounded-3xl p-6 shadow-lg text-white relative overflow-hidden cursor-pointer group hover:shadow-xl hover:-translate-y-1 transition-all">
-                <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-[#3b8ea5]/50 rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition-transform"></div>
-                <div class="relative z-10 flex justify-between items-start mb-5 flex-col gap-2">
-                    <div class="flex items-center justify-between w-full">
-                        <h3 class="font-bold opacity-90 text-lg group-hover:text-[#f5ee9e] transition-colors">Announcements</h3>
-                        <i class="fas fa-arrow-right opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all text-[#f5ee9e]"></i>
-                    </div>
-                    <span class="bg-[#f5ee9e] text-[#2d728f] text-[10px] px-3 py-1 rounded-full font-black tracking-wide shadow-sm flex items-center gap-1">
-                        ${badgeHTML}
-                    </span>
-                </div>
-                <div class="relative z-10 space-y-3 pointer-events-none">
-                    ${overviewAnnouncementsHTML}
-                </div>
+            <h3 class="font-bold text-white/70 text-xs tracking-widest uppercase mb-4 relative z-10">Clock In Status</h3>
+            <div class="flex items-end gap-2 mb-2 relative z-10">
+              <span class="text-4xl font-extrabold text-white leading-none drop-shadow-sm">${clockInTime}</span>
+              <span class="text-sm font-bold text-white/80 mb-1">${clockInAmPm}</span>
             </div>
-
-            <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
-                <h3 class="font-bold text-gray-800 mb-5">Summary <span class="text-gray-400 font-medium">This Month</span></h3>
-                <div class="space-y-5">
-                    <div>
-                        <div class="flex justify-between text-xs mb-2">
-                            <span class="text-gray-500 font-bold flex items-center gap-2"><i class="fas fa-circle text-[8px] text-[#3b8ea5]"></i> On Time</span>
-                            <span class="font-black text-gray-800">${onTimeCount} Days</span>
-                        </div>
-                        <div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
-                            <div class="bg-gradient-to-r from-[#2d728f] to-[#3b8ea5] h-full rounded-full relative" style="width: ${onTimePercent}%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-xs mb-2">
-                            <span class="text-gray-500 font-bold flex items-center gap-2"><i class="fas fa-circle text-[8px] text-[#ab3428]"></i> Late</span>
-                            <span class="font-black text-gray-800">${lateCount} Days</span>
-                        </div>
-                        <div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
-                            <div class="bg-gradient-to-r from-red-500 to-[#ab3428] h-full" style="width: ${latePercent}%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-xs mb-2">
-                            <span class="text-gray-500 font-bold flex items-center gap-2"><i class="fas fa-circle text-[8px] text-[#f49e4c]"></i> Permit / Sick</span>
-                            <span class="font-black text-gray-800">${permitSickCount} Days</span>
-                        </div>
-                        <div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
-                            <div class="bg-gradient-to-r from-orange-400 to-[#f49e4c] h-full" style="width: ${permitSickPercent}%"></div>
-                        </div>
-                    </div>
-                </div>
+            <div class="mt-auto pt-4 relative z-10">
+              <span
+                class="inline-block px-3 py-1 bg-white/20 text-white text-[10px] font-bold rounded-full uppercase tracking-wide border border-white/30 backdrop-blur-sm shadow-sm">${clockInStatus}</span>
             </div>
+          </div>
 
-        </aside>
+          <div
+            class="bg-white p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex flex-col items-center hover:shadow-lg transition-shadow">
+            <h3 class="font-bold text-gray-500 text-xs tracking-widest uppercase self-start w-full mb-2">Monthly Rate</h3>
+            <div class="relative flex items-center justify-center mt-2 flex-1 w-full">
+
+              <div class="relative w-24 h-24 rounded-full flex items-center justify-center"
+                style="background: conic-gradient(#f49e4c ${monthlyRatePercentage}%, #f3f4f6 0);">
+
+                <div class="absolute inset-0 m-[10px] bg-white rounded-full"></div>
+
+                <span class="text-2xl font-black text-gray-800 z-10">${monthlyRatePercentage}<span
+                    class="text-sm text-gray-400">%</span></span>
+              </div>
+            </div>
+            <p class="text-[10px] font-bold text-gray-400 mt-3 bg-gray-50 px-3 py-1 rounded-full">${totalPresentDays} of
+              ${activeWorkingDays} Days</p>
+          </div>
+
+          <div
+            class="relative bg-gray-900 p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] overflow-hidden flex flex-col justify-end group min-h-[180px] cursor-pointer mb-4">
+            <div
+              class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-gray-200 opacity-60 group-hover:scale-110 transition-transform duration-700">
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#004a87] via-[#004a87]/60 to-transparent"></div>
+
+            <div class="relative z-10">
+              <div class="flex justify-between items-end">
+                <div>
+                  <h3 class="text-white/80 text-[10px] font-bold tracking-widest uppercase mb-1 drop-shadow-md">Last
+                    Location - Main Campus</h3>
+                  <p class="text-white font-bold text-sm leading-tight drop-shadow-md">
+                    POLMAN Bandung<br>
+                    <span class="font-normal text-xs text-[#f5ee9e]">Jl. Kanayakan No. 21, Dago</span>
+                  </p>
+                </div>
+                <div
+                  class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30 group-hover:bg-white group-hover:text-[#004a87] transition-colors shadow-lg">
+                  <i class="fas fa-university"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
+          <div class="flex justify-between items-center mb-8">
+            <h3 class="font-bold text-gray-800 text-lg">Timeline History</h3>
+            <a href="#"
+              class="text-xs font-bold px-4 py-2 bg-[#3b8ea5]/10 text-[#3b8ea5] rounded-full hover:bg-[#3b8ea5] hover:text-white transition-colors">View
+              all</a>
+          </div>
+
+          <div class="relative pl-6 border-l-2 border-gray-100 space-y-8 mt-2 ml-2">
+            ${timelineHTML}
+          </div>
+        </div>
+      </div>
+
+      <aside class="w-full xl:w-[350px] flex flex-col gap-8">
+
+        <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
+          <div class="flex justify-between items-center mb-6">
+            <div id="calendar-header">
+              <span class="text-sm font-bold text-gray-800" id="month-date-display">${currentDate.toLocaleString("en-US", {
+    month: "long", year: "numeric"
+  })}</span>
+            </div>
+            <div class="flex gap-2 text-gray-400 font-bold">
+              <button
+                class="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition">&lt;</button>
+              <button
+                class="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition">&gt;</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-7 text-center text-xs font-bold tracking-wide text-[#f49e4c] mb-4">
+            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+          </div>
+          <div id="calendar-days" class="grid grid-cols-7 text-center text-sm text-gray-600 gap-y-4"></div>
+        </div>
+
+        <div data-route="announcement"
+          class="bg-gradient-to-br from-[#2d728f] to-slate-800 rounded-3xl p-6 shadow-lg text-white relative overflow-hidden cursor-pointer group hover:shadow-xl hover:-translate-y-1 transition-all">
+          <div
+            class="absolute -right-10 -bottom-10 w-32 h-32 bg-[#3b8ea5]/50 rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition-transform">
+          </div>
+          <div class="relative z-10 flex justify-between items-start mb-5 flex-col gap-2">
+            <div class="flex items-center justify-between w-full">
+              <h3 class="font-bold opacity-90 text-lg group-hover:text-[#f5ee9e] transition-colors">Announcements</h3>
+              <i
+                class="fas fa-arrow-right opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all text-[#f5ee9e]"></i>
+            </div>
+            <span
+              class="bg-[#f5ee9e] text-[#2d728f] text-[10px] px-3 py-1 rounded-full font-black tracking-wide shadow-sm flex items-center gap-1">
+              ${badgeHTML}
+            </span>
+          </div>
+          <div class="relative z-10 space-y-3 pointer-events-none">
+            ${overviewAnnouncementsHTML}
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
+          <h3 class="font-bold text-gray-800 mb-5">Summary <span class="text-gray-400 font-medium">This Month</span></h3>
+          <div class="space-y-5">
+            <div>
+              <div class="flex justify-between text-xs mb-2">
+                <span class="text-gray-500 font-bold flex items-center gap-2"><i
+                    class="fas fa-circle text-[8px] text-[#3b8ea5]"></i> On Time</span>
+                <span class="font-black text-gray-800">${onTimeCount} Days</span>
+              </div>
+              <div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                <div class="bg-gradient-to-r from-[#2d728f] to-[#3b8ea5] h-full rounded-full relative"
+                  style="width: ${onTimePercent}%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-2">
+                <span class="text-gray-500 font-bold flex items-center gap-2"><i
+                    class="fas fa-circle text-[8px] text-[#ab3428]"></i> Late</span>
+                <span class="font-black text-gray-800">${lateCount} Days</span>
+              </div>
+              <div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                <div class="bg-gradient-to-r from-red-500 to-[#ab3428] h-full" style="width: ${latePercent}%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-2">
+                <span class="text-gray-500 font-bold flex items-center gap-2"><i
+                    class="fas fa-circle text-[8px] text-[#f49e4c]"></i> Permit / Sick</span>
+                <span class="font-black text-gray-800">${permitSickCount} Days</span>
+              </div>
+              <div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                <div class="bg-gradient-to-r from-orange-400 to-[#f49e4c] h-full" style="width: ${permitSickPercent}%">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
     </div>
   `;
 }
@@ -736,8 +775,8 @@ export function renderStudentAttendance(user) {
       attendanceData.push({
         id: currentAtt.payload.id || "-",
         attendance:
-          currentAtt.payload.attendance || currentAtt.payload.status || "-", 
-        status: currentAtt.payload.status || "-", 
+          currentAtt.payload.attendance || currentAtt.payload.status || "-",
+        status: currentAtt.payload.status || "-",
         notes: currentAtt.payload.notes || "-",
         created_at:
           currentAtt.payload.created_at ||
@@ -1101,12 +1140,11 @@ export function renderStudentAttendance(user) {
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        ${
-                          attendanceData.length === 0
-                            ? `<tr><td colspan="5" class="text-center py-8 text-gray-500">Belum ada data di database.</td></tr>`
-                            : attendanceData
-                                .map(
-                                  (item) => `
+                        ${attendanceData.length === 0
+      ? `<tr><td colspan="5" class="text-center py-8 text-gray-500">Belum ada data di database.</td></tr>`
+      : attendanceData
+        .map(
+          (item) => `
                             <tr class="hover:bg-gray-50 transition">
                                 <td class="py-3 px-4 text-xs font-mono text-gray-400">${item.id}</td>
                                 <td class="py-3 px-4 text-sm font-medium text-gray-800">${new Date(item.created_at).toLocaleString("id-ID")}</td>
@@ -1115,9 +1153,9 @@ export function renderStudentAttendance(user) {
                                 <td class="py-3 px-4 text-sm text-gray-500 truncate max-w-[200px]">${item.notes}</td>
                             </tr>
                         `,
-                                )
-                                .join("")
-                        }
+        )
+        .join("")
+    }
                     </tbody>
                 </table>
             </div>
@@ -1246,14 +1284,14 @@ export function initAttendanceEvents(user) {
               db.locations && db.locations.length > 0
                 ? db.locations
                 : [
-                    {
-                      id: "LOK-POLMAN",
-                      name: "Polman Bandung",
-                      lat: -6.874457,
-                      lng: 107.61864,
-                      radius: 300,
-                    },
-                  ];
+                  {
+                    id: "LOK-POLMAN",
+                    name: "Polman Bandung",
+                    lat: -6.874457,
+                    lng: 107.61864,
+                    radius: 300,
+                  },
+                ];
 
             for (const loc of targetLocations) {
               const dist = calculateHaversine(
@@ -1271,7 +1309,7 @@ export function initAttendanceEvents(user) {
 
             if (isInsideGeofence) {
               matchedLocationId = foundLocId;
-              gpsAttempts = 0; 
+              gpsAttempts = 0;
               updateStep(1, "done");
               statusText.innerText = "Lokasi valid. Menyiapkan kamera...";
               setTimeout(() => initFaceVerification(), 1000);
@@ -1329,7 +1367,7 @@ export function initAttendanceEvents(user) {
       hasSuccessfullyVerified = false;
 
       if (detectionInterval) clearInterval(detectionInterval);
-      detectionInterval = setInterval(verifyFaceCore, 1500); 
+      detectionInterval = setInterval(verifyFaceCore, 1500);
     } catch (err) {
       console.error(err);
       errorCallback("Gagal mengakses kamera/memuat AI.", "face");
@@ -1347,7 +1385,7 @@ export function initAttendanceEvents(user) {
         .withFaceLandmarks()
         .withFaceDescriptor();
 
-      if (hasSuccessfullyVerified) return; 
+      if (hasSuccessfullyVerified) return;
 
       if (detection) {
         const binaryString = atob(user.payload.faceCode);
@@ -1378,7 +1416,7 @@ export function initAttendanceEvents(user) {
       clearInterval(detectionInterval);
       errorCallback("Gagal mengeksekusi pendeteksian wajah.", "face");
     } finally {
-      isProcessingFace = false; 
+      isProcessingFace = false;
     }
   }
 
@@ -1410,6 +1448,8 @@ export function initAttendanceEvents(user) {
     });
   }
 
+
+
   if (btnRetry) {
     btnRetry.addEventListener("click", () => {
       errorState.classList.add("hidden");
@@ -1418,7 +1458,7 @@ export function initAttendanceEvents(user) {
       if (currentStep === "location") {
         startGeofencing();
       } else if (currentStep === "face") {
-        initFaceVerification(); 
+        initFaceVerification();
       }
     });
   }
@@ -1448,15 +1488,127 @@ export function initAttendanceEvents(user) {
     };
   }
 
+  // ==========================================
+  // LOGIKA FORM PENGAJUAN (ANTI-ERROR & TANPA REFRESH)
+  // ==========================================
+
+  // Penanda agar event tidak dobel saat pindah halaman
+  if (!window.izinEventBound) {
+    window.izinEventBound = true;
+    window.uploadedFileName = "";
+    window.uploadedFileBase64 = null;
+
+    // 1. EVENT DELEGATION: AREA UPLOAD BUKTI
+    document.addEventListener('change', function (e) {
+      if (e.target && e.target.id === 'dropzone-file') {
+        const fileInput = e.target;
+        const fileText = fileInput.previousElementSibling?.querySelector('p');
+
+        if (fileInput.files && fileInput.files[0]) {
+          window.uploadedFileName = fileInput.files[0].name;
+
+          // Feedback UI: Teks berubah jadi warna biru
+          if (fileText) {
+            fileText.textContent = window.uploadedFileName;
+            fileText.classList.replace('text-gray-500', 'text-[#3b8ea5]');
+            fileText.classList.add('font-bold');
+          }
+
+          // Convert ke Base64
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            window.uploadedFileBase64 = event.target.result;
+          };
+          reader.readAsDataURL(fileInput.files[0]);
+        }
+      }
+    });
+
+    // 2. EVENT DELEGATION: TOMBOL SUBMIT
+    document.addEventListener('click', function (e) {
+      const btnSubmitIzin = e.target.closest('#form-perizinan button');
+
+      if (btnSubmitIzin) {
+        e.preventDefault();
+
+        const form = btnSubmitIzin.closest('#form-perizinan');
+        const kategoriInput = form.querySelector('input[name="kategori"]:checked');
+        const tanggalInput = form.querySelector('input[type="date"]');
+        const keteranganInput = form.querySelector('textarea');
+
+        // Validasi
+        if (!tanggalInput.value || !keteranganInput.value.trim()) {
+          alert("Harap isi tanggal dan keterangan pengajuan!");
+          return;
+        }
+
+        // Susun Data
+        const attendanceType = kategoriInput.value === 'sakit' ? 'sick' : 'permit';
+        const recordId = "ATT-" + Date.now();
+        const dateObj = new Date(tanggalInput.value);
+        const now = new Date();
+        dateObj.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+
+        let finalNotes = keteranganInput.value.trim();
+        if (window.uploadedFileName) finalNotes += ` (Lampiran: ${window.uploadedFileName})`;
+
+        // Insert ke Memori Linked List (db.attendance)
+        db.attendance.insert(recordId, {
+          id: recordId,
+          id_mahasiswa: user?.payload?.id || user?.payload?.nim || "225443028",
+          id_lokasi: "-",
+          attendance: attendanceType,
+          status: "Pending",
+          notes: finalNotes,
+          attachment: window.uploadedFileBase64 || null,
+          created_at: dateObj.toISOString(),
+          updated_at: now.toISOString()
+        });
+
+        alert(`Pengajuan ${kategoriInput.value} berhasil. Lihat tabel riwayat di bawah!`);
+
+        // Reset Form & UI
+        form.reset();
+        const fileText = form.querySelector('#dropzone-file')?.previousElementSibling?.querySelector('p');
+        if (fileText) {
+          fileText.textContent = "Klik untuk unggah";
+          fileText.classList.replace('text-[#3b8ea5]', 'text-gray-500');
+          fileText.classList.remove('font-bold');
+        }
+        window.uploadedFileName = "";
+        window.uploadedFileBase64 = null;
+
+        // Tutup Modal
+        const modalLeave = document.getElementById('modal-leave-request');
+        if (modalLeave) modalLeave.classList.replace('flex', 'hidden');
+
+        // PENTING: Refresh tampilan dashboard secara reaktif TANPA me-refresh browser!
+        // Ini akan memicu fungsi render StudentDashboard kamu ulang agar tabelnya update
+        window.dispatchEvent(new CustomEvent("app-navigate", { detail: "overview" }));
+      }
+    });
+  }
+
+  // 3. Tombol Buka Modal
   if (btnOpenLeave && modalLeave) {
     btnOpenLeave.onclick = () => {
       modalLeave.classList.replace("hidden", "flex");
     };
   }
 
+  // 4. Tombol Tutup Modal & Reset Form (jika batal submit)
   if (btnCloseLeave && modalLeave) {
     btnCloseLeave.onclick = () => {
       modalLeave.classList.replace("flex", "hidden");
+
+      if (formPerizinan) formPerizinan.reset();
+      if (fileText) {
+        fileText.textContent = "Klik untuk unggah";
+        fileText.classList.replace('text-[#3b8ea5]', 'text-gray-500');
+        fileText.classList.remove('font-bold');
+      }
+      uploadedFileName = "";
+      uploadedFileBase64 = null;
     };
   }
 
