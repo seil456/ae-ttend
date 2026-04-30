@@ -1,133 +1,152 @@
 import { db } from '../core/Database.js';
 
 export function renderAdminDashboard() {
+    let totalUsers = 0;
+    let totalStudents = 0;
+    let currUser = db.users.head;
+    while (currUser) {
+        totalUsers++;
+        if (currUser.payload.role === 'student') totalStudents++;
+        currUser = currUser.next;
+    }
+
+    const totalLocations = db.locations ? db.locations.length : 0;
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    let presentToday = 0;
+    let currAtt = db.attendance.head;
+    
+    let recentActivities = [];
+
+    while (currAtt) {
+        const payload = currAtt.payload;
+        const attDate = payload.created_at ? payload.created_at.split('T')[0] : "";
+        
+        if (attDate === todayStr && (payload.attendance === 'present' || payload.attendance === 'late')) {
+            presentToday++;
+        }
+
+        recentActivities.push(payload);
+        
+        currAtt = currAtt.next;
+    }
+
+    let attendanceRate = "0.0%";
+    if (totalStudents > 0 && presentToday > 0) {
+        attendanceRate = ((presentToday / totalStudents) * 100).toFixed(1) + "%";
+    } else if (totalStudents > 0 && presentToday === 0) {
+        attendanceRate = "0.0%";
+    } else {
+        attendanceRate = "-"; 
+    }
+
+    recentActivities.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    const top5Activities = recentActivities.slice(0, 5);
+
+    let activitiesHTML = "";
+    if (top5Activities.length === 0) {
+        activitiesHTML = `
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 border-dashed">
+                <p class="text-slate-500 text-center py-10">Belum ada aktivitas terekam.</p>
+            </div>`;
+    } else {
+        activitiesHTML = top5Activities.map(act => {
+            const student = db.users.findWhere('nim', act.id_mahasiswa);
+            const studentName = student ? student.payload.nama : act.id_mahasiswa;
+            const timeStr = new Date(act.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = new Date(act.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
+            
+            let icon, color, bg;
+            const type = (act.attendance || "").toLowerCase();
+            if (type === 'present') { icon = 'fa-check-circle'; color = 'text-green-500'; bg = 'bg-green-100'; }
+            else if (type === 'absent') { icon = 'fa-times-circle'; color = 'text-red-500'; bg = 'bg-red-100'; }
+            else if (type === 'sick') { icon = 'fa-procedures'; color = 'text-yellow-600'; bg = 'bg-yellow-100'; }
+            else if (type === 'permit') { icon = 'fa-suitcase-rolling'; color = 'text-purple-500'; bg = 'bg-purple-100'; }
+            else { icon = 'fa-info-circle'; color = 'text-gray-500'; bg = 'bg-gray-100'; }
+
+            return `
+            <div class="flex items-center gap-4 p-4 hover:bg-slate-50 rounded-xl transition-colors border border-transparent hover:border-slate-100">
+                <div class="w-12 h-12 rounded-full ${bg} ${color} flex items-center justify-center shrink-0 text-xl shadow-sm">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-bold text-slate-800">${studentName} <span class="text-xs font-normal text-slate-500 ml-1">(${act.id_mahasiswa})</span></p>
+                    <p class="text-xs text-slate-500 mt-0.5">Status: <span class="font-semibold capitalize">${act.attendance}</span> - ${act.status}</p>
+                </div>
+                <div class="text-right shrink-0">
+                    <p class="text-sm font-bold text-slate-700">${timeStr}</p>
+                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">${dateStr}</p>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
     return `
     <div class="max-w-7xl mx-auto">
-            <div class="mb-8">
-              <h2 class="text-2xl font-bold text-langit">Dashboard Overview</h2>
-              <p class="text-slate-500 mt-1">
-                Sistem berjalan optimal. Berikut metrik hari ini.
-              </p>
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-[#2d728f]">Dashboard Overview</h2>
+            <p class="text-slate-500 mt-1">
+                Sistem berjalan optimal. Berikut metrik data Anda saat ini.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Card 1: Total Pengguna -->
+            <div class="bg-white p-6 rounded-2xl border-l-4 border-l-[#2d728f] shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-lg transition-all transform hover:-translate-y-1">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Total Pengguna</h3>
+                        <p class="text-4xl font-black text-[#2d728f]">${totalUsers}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-[#2d728f]/10 text-[#2d728f] rounded-xl flex items-center justify-center text-xl">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <p class="text-[10px] font-bold text-slate-400 mt-4 bg-slate-50 inline-block px-2 py-1 rounded-md">${totalStudents} Mahasiswa / ${totalUsers - totalStudents} Admin</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div
-                class="bg-white p-6 rounded-2xl border-l-4 border-l-langit shadow-sm hover:shadow-md transition-all"
-              >
+            <!-- Card 2: Lokasi Aktif -->
+            <div class="bg-white p-6 rounded-2xl border-l-4 border-l-[#3b8ea5] shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-lg transition-all transform hover:-translate-y-1">
                 <div class="flex justify-between items-start">
-                  <div>
-                    <h3
-                      class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2"
-                    >
-                      Total Pengguna
-                    </h3>
-                    <p class="text-3xl font-bold text-langit">1,248</p>
-                  </div>
-                  <div class="p-3 bg-vanila text-langit rounded-xl shadow-sm">
-                    <svg
-                      class="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                      ></path>
-                    </svg>
-                  </div>
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Lokasi Aktif</h3>
+                        <p class="text-4xl font-black text-[#3b8ea5]">${totalLocations}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-[#3b8ea5]/10 text-[#3b8ea5] rounded-xl flex items-center justify-center text-xl">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
                 </div>
-              </div>
-
-              <div
-                class="bg-white p-6 rounded-2xl border-l-4 border-l-pasifik shadow-sm hover:shadow-md transition-all"
-              >
-                <div class="flex justify-between items-start">
-                  <div>
-                    <h3
-                      class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2"
-                    >
-                      Lokasi Aktif
-                    </h3>
-                    <p class="text-3xl font-bold text-pasifik">24</p>
-                  </div>
-                  <div class="p-3 bg-pasifik/10 text-pasifik rounded-xl">
-                    <svg
-                      class="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      ></path>
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      ></path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="bg-white p-6 rounded-2xl border-l-4 border-l-vanila shadow-sm hover:shadow-md transition-all"
-              >
-                <div class="flex justify-between items-start">
-                  <div>
-                    <h3
-                      class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2"
-                    >
-                      Tingkat Kehadiran
-                    </h3>
-                    <p class="text-3xl font-bold text-langit">94.5%</p>
-                  </div>
-                  <div class="p-3 bg-vanila/50 text-langit rounded-xl">
-                    <svg
-                      class="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      ></path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
+                <p class="text-[10px] font-bold text-slate-400 mt-4 bg-slate-50 inline-block px-2 py-1 rounded-md">Titik Geofencing Terdaftar</p>
             </div>
 
-            <div
-              class="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 min-h-[400px]"
-            >
-              <h3 class="text-lg font-bold text-langit mb-4">
-                Aktivitas Terkini
-              </h3>
-              <div
-                class="p-4 bg-slate-50 rounded-xl border border-pasifik/30 border-dashed"
-              >
-                <p class="text-slate-500 text-center py-10">
-                  Integrasikan modul LMS atau tabel data Anda di area ini.
-                </p>
-              </div>
+            <!-- Card 3: Tingkat Kehadiran -->
+            <div class="bg-white p-6 rounded-2xl border-l-4 border-l-[#f49e4c] shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-lg transition-all transform hover:-translate-y-1">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Tingkat Kehadiran</h3>
+                        <p class="text-4xl font-black text-[#f49e4c]">${attendanceRate}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-[#f49e4c]/10 text-[#f49e4c] rounded-xl flex items-center justify-center text-xl">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <p class="text-[10px] font-bold text-slate-400 mt-4 bg-slate-50 inline-block px-2 py-1 rounded-md">Berdasarkan data hari ini</p>
             </div>
-          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-[#2d728f]"><i class="fas fa-history mr-2 text-[#f49e4c]"></i> Aktivitas Terkini</h3>
+                <button onclick="navigate('admin-attendance')" class="text-xs font-bold px-4 py-2 bg-slate-100 text-slate-600 rounded-full hover:bg-[#2d728f] hover:text-white transition-colors">Lihat Semua</button>
+            </div>
+            <div class="space-y-2">
+                ${activitiesHTML}
+            </div>
+        </div>
+    </div>
     `;
 }
-
 export function renderAdminUsers() {
-    // 1. Ekstrak Node ke Array & Dapatkan Kelas Unik
     let usersArray = [];
     let uniqueClasses = new Set();
     let current = db.users.head;
@@ -140,13 +159,11 @@ export function renderAdminUsers() {
         current = current.next;
     }
 
-    // 2. Generate Options untuk Filter Kelas
     let classOptions = `<option value="all">Semua Kelas</option>`;
     uniqueClasses.forEach(cls => {
         classOptions += `<option value="${cls}">${cls}</option>`;
     });
 
-    // 3. Render Initial Rows
     let rows = '';
     usersArray.forEach((user, index) => {
         rows += `
@@ -155,8 +172,10 @@ export function renderAdminUsers() {
             <td class="p-4 text-sm font-semibold text-gray-700">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-full bg-[#3b8ea5]/10 text-[#3b8ea5] flex items-center justify-center font-bold overflow-hidden border border-[#3b8ea5]/20">
-                        <img src="${user.userPic ? (user.userPic.startsWith('public') ? user.userPic : 'public/images/userPics/' + user.userPic) : 'public/images/userPics/default.png'}" 
-                             alt="${user.nama}" class="w-full h-full object-cover">
+                    <img src="${ user.userPic ? (user.userPic.startsWith('data:image') || user.userPic.startsWith('public') ? user.userPic : 'public/images/userPics/' + user.userPic): 'public/images/userPics/default.png'}" 
+                    alt="${user.nama}" 
+                    class="w-full h-full object-cover"
+                    onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.nama)}&background=3b8ea5&color=fff'">
                     </div>
                     <div class="text-gray-800 font-bold flex flex-col">
                         ${user.nama}
@@ -248,7 +267,6 @@ export function renderAdminUsers() {
     `;
 }
 
-// Helper pembungkus semua Modal HTML
 function getModalHTMLTemplates() {
     return `
     <!-- 1. MODAL ADD USER -->
@@ -498,8 +516,19 @@ export function renderAdminAttendance() {
                 </tbody>
             </table>
         </div>
+        
+        <div id="imageLightbox" class="fixed inset-0 bg-black/90 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-md cursor-zoom-out transition-opacity">
+            <button id="btnCloseLightbox" class="absolute top-6 right-6 lg:top-10 lg:right-10 text-white/70 hover:text-white text-4xl transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="lightboxImg" src="" alt="Enlarged Attachment" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl">
+            <p class="text-white/50 mt-4 text-sm font-medium tracking-wider">Klik di mana saja untuk menutup</p>
+        </div>
+
+    </div> <!-- Penutup max-w-7xl mx-auto... -->
 
         ${getAdminAttendanceModalsHTML(usersList, locationsList)}
+        
     </div>
     `;
 }
@@ -537,13 +566,13 @@ function getAdminAttendanceModalsHTML(usersList, locationsList) {
                             <option value="absent">Absent</option>
                             <option value="sick">Sick</option>
                             <option value="permit">Permit</option>
+                            <option value="late">Late</option>
                         </select>
                     </div>
                     <div class="col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
                         <select id="attStatus" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#3b8ea5]" required>
                             <option value="Approved">Approved</option>
-                            <option value="On Time">On Time</option>
                             <option value="Pending">Pending</option>
                             <option value="Rejected">Rejected</option>
                         </select>
@@ -603,13 +632,13 @@ function getAdminAttendanceModalsHTML(usersList, locationsList) {
                             <option value="absent">Absent</option>
                             <option value="sick">Sick</option>
                             <option value="permit">Permit</option>
+                            <option value="late">Late</option>
                         </select>
                     </div>
                     <div class="col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
                         <select id="editStatus" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#3b8ea5]" required>
                             <option value="Approved">Approved</option>
-                            <option value="On Time">On Time</option>
                             <option value="Pending">Pending</option>
                             <option value="Rejected">Rejected</option>
                         </select>
@@ -627,42 +656,48 @@ function getAdminAttendanceModalsHTML(usersList, locationsList) {
         </div>
     </div>
 
-    <!-- (Modal Approve) -->
-<div id="modalApproveAttendance" class="fixed inset-0 bg-black/50 z-50 hidden flex-col items-center justify-center p-4 backdrop-blur-sm transition-opacity overflow-y-auto">
-            <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all scale-95 duration-200 p-8 text-center my-8">
-                <input type="hidden" id="approveAttId"> 
-                
-                <div class="w-20 h-20 bg-yellow-100 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-question text-4xl"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-slate-800 mb-2">Approve Attendance?</h3>
-                
-                <!-- WADAH LAMPIRAN (Disembunyikan secara default) -->
-                <div id="approveAttachmentContainer" class="hidden mb-6 mt-4">
-                    <p class="text-sm font-semibold text-gray-600 mb-2 text-left">Lampiran Surat / Bukti:</p>
-                    <div class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center min-h-[100px] max-h-[250px]">
-                        <img id="approveAttachmentImg" src="" alt="Attachment" class="max-w-full max-h-[250px] object-contain">
-                    </div>
-                </div>
+<!-- (Modal Approve) -->
+    <div id="modalApproveAttendance" class="fixed inset-0 bg-black/50 z-50 hidden flex-col items-center justify-center p-4 backdrop-blur-sm transition-opacity overflow-y-auto">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all scale-95 duration-200 p-8 text-center my-8">
+            <input type="hidden" id="approveAttId"> 
+            
+            <div class="w-20 h-20 bg-yellow-100 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-question text-4xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">Approve Attendance?</h3>
+            
+            <!-- WADAH CATATAN MAHASISWA (BARU) -->
+            <div id="approveNotesContainer" class="hidden mt-6 mb-2 w-full text-left bg-gray-50 border border-gray-200 rounded-xl p-4 shadow-inner">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1"><i class="fas fa-comment-alt"></i> Catatan Mahasiswa:</p>
+                <p id="approveStudentNotes" class="text-sm text-gray-700 italic font-medium leading-relaxed"></p>
+            </div>
 
-                <p class="text-slate-500 mb-8 text-sm leading-relaxed">
-                    Apakah Anda yakin ingin merespon presensi ini? Tindakan ini akan mengubah status presensi menjadi <span class="font-bold text-green-600">Approved</span> atau <span class="font-bold text-red-600">Rejected</span>.
-                </p>
-                <div class="flex gap-3 justify-center mb-4">
-                    <button type="button" id="btnCancelApprove" class="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold shadow-md shadow-red-200 transition-all active:scale-95">
-                        No, Reject
-                    </button>
-                    <button type="button" id="btnConfirmApprove" class="flex-1 py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold shadow-md shadow-green-200 transition-all active:scale-95">
-                        Yes, Approve!
-                    </button>
+            <!-- WADAH LAMPIRAN (Disembunyikan secara default) -->
+            <div id="approveAttachmentContainer" class="hidden mb-6 mt-4">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 text-left"><i class="fas fa-paperclip"></i> Lampiran Bukti:</p>
+                <div class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center min-h-[100px] max-h-[250px] shadow-inner">
+                    <img id="approveAttachmentImg" src="" alt="Attachment" class="max-w-full max-h-[250px] object-contain cursor-zoom-in hover:scale-[1.02] transition-transform" title="Klik untuk memperbesar">
                 </div>
-                
-                <!-- Tombol Netral untuk menutup tanpa mengubah status -->
-                <button type="button" id="btnCloseApproveModalOnly" class="text-gray-400 hover:text-gray-600 text-sm font-medium underline transition-colors">
-                    Tutup (Biarkan Pending)
+            </div>
+
+            <p class="text-slate-500 mb-6 mt-4 text-sm leading-relaxed">
+                Apakah Anda yakin ingin merespon presensi ini? Tindakan ini akan mengubah status presensi menjadi <span class="font-bold text-green-600">Approved</span> atau <span class="font-bold text-red-600">Rejected</span>.
+            </p>
+            <div class="flex gap-3 justify-center mb-4">
+                <button type="button" id="btnCancelApprove" class="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold shadow-md shadow-red-200 transition-all active:scale-95">
+                    No, Reject
+                </button>
+                <button type="button" id="btnConfirmApprove" class="flex-1 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold shadow-md shadow-blue-200 transition-all active:scale-95">
+                    Yes, Approve!
                 </button>
             </div>
+            
+            <!-- Tombol Netral untuk menutup tanpa mengubah status -->
+            <button type="button" id="btnCloseApproveModalOnly" class="text-gray-400 hover:text-gray-600 text-sm font-medium underline transition-colors">
+                Tutup (Biarkan Pending)
+            </button>
         </div>
+    </div>
     `;
 }
 
@@ -698,7 +733,7 @@ export function renderAdminLocation() {
                     Kampus Utama
                   </h5>
                   <p class="text-sm text-slate-100">
-                    Jl. Pendidikan No. 1, Jakarta
+                    Jl. Kanayakan No. 21, Bandung
                   </p>
 
                   <iframe
@@ -734,7 +769,7 @@ export function renderAdminLocation() {
                     Kampus Cabang
                   </h5>
                   <p class="text-sm text-slate-100">
-                    Jl. Merdeka No. 45, Bandung
+                    Jl. Dago pojok No. 45, Bandung
                   </p>
 
                   <iframe

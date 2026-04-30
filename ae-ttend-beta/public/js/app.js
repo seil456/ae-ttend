@@ -474,29 +474,42 @@ if (newUserPic) {
       let fullPath = "default.png";
 
       if (file) {
-        const ext = file.name.split('.').pop().toLowerCase();
-        fullPath = `user_${finalNim}.${ext}`;
-      }
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const base64Data = event.target.result; // Ini data asli gambarnya
 
-      if (db.users.findWhere("nim", finalNim)) {
-        return alert(`NIM atau ID ${finalNim} sudah terdaftar di sistem.`);
-      }
+                db.users.insert(finalNim, {
+                    nim: finalNim,
+                    nama: nama,
+                    kelas: finalKelas,
+                    userPic: base64Data, // SIMPAN DATANYA, BUKAN NAMA FILENYA
+                    role: role,
+                    password: password,
+                    faceCode: null
+                });
 
-      db.users.insert(finalNim, {
-        nim: finalNim,
-        nama: nama,
-        kelas: finalKelas,
-        userPic: fullPath,
-        role: role,
-        password: password,
-        faceCode: null
-      });
-
-      alert(`Berhasil mendaftarkan ${role}: ${nama}`);
-      closeAddModal();
-      navigate("admin-users");
+                alert(`Berhasil mendaftarkan ${role}: ${nama}`);
+                closeAddModal();
+                navigate("admin-users");
+            };
+            reader.readAsDataURL(file);
+        } else {
+            // Jika tidak ada foto, pakai default
+            db.users.insert(finalNim, {
+                nim: finalNim,
+                nama: nama,
+                kelas: finalKelas,
+                userPic: "public/images/userPics/default.png", 
+                role: role,
+                password: password,
+                faceCode: null
+            });
+            alert(`Berhasil mendaftarkan ${role}: ${nama}`);
+            closeAddModal();
+            navigate("admin-users");
+        }
     };
-  }
+}
 
   // =========================================================================
   // EVENT DELEGATION (EDIT, VIEW, DELETE)
@@ -867,7 +880,7 @@ function attachAdminAttendanceEvents() {
                 </td>
                 <td class="p-4 text-sm text-center">            
                     ${status === 'Pending' ? `
-                    <button class="btn-approvement-att text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors font-medium shadow-sm" data-id="${att.id}">Approve</button>
+                    <button class="btn-approvement-att text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors font-medium shadow-sm" data-id="${att.id}">Approve</button>
                     ` : `
                     <button class="btn-detail-att text-slate-400 hover:text-pasifik hover:scale-125 transition-transform mr-2" data-id="${att.id}"><i class="fas fa-eye text-lg pointer-events-none"></i></button>
                     <button class="btn-edit-att text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors font-medium shadow-sm" data-id="${att.id}"><i class="fas fa-edit pointer-events-none"></i></button>
@@ -1172,6 +1185,18 @@ function attachAdminAttendanceEvents() {
           curr = curr.next;
         }
 
+        // --- HANDLE CATATAN MAHASISWA ---
+        const notesContainer = document.getElementById("approveNotesContainer");
+        const studentNotes = document.getElementById("approveStudentNotes");
+        
+        if (targetAtt && targetAtt.notes && targetAtt.notes !== "-") {
+            studentNotes.textContent = `"${targetAtt.notes}"`;
+            notesContainer.classList.remove("hidden");
+        } else {
+            notesContainer.classList.add("hidden");
+            studentNotes.textContent = "";
+        }
+        
         // Handle Gambar Lampiran
         const attachmentContainer = document.getElementById("approveAttachmentContainer");
         const attachmentImg = document.getElementById("approveAttachmentImg");
@@ -1234,7 +1259,37 @@ function attachAdminAttendanceEvents() {
         if (currentModalApprove) currentModalApprove.classList.replace("flex", "hidden");
         navigate("admin-attendance");
       }
+
+      // =========================================================================
+      // FITUR ZOOM GAMBAR (LIGHTBOX)
+      // =========================================================================
+      
+      // 1. BUKA LIGHTBOX JIKA GAMBAR DIKLIK
+      if (e.target.id === "approveAttachmentImg") {
+        const lightbox = document.getElementById("imageLightbox");
+        const lightboxImg = document.getElementById("lightboxImg");
+        
+        if (lightbox && lightboxImg && e.target.src) {
+            lightboxImg.src = e.target.src; // Pindahkan gambar ke lightbox
+            lightbox.classList.replace("hidden", "flex");
+        }
+      }
+
+      // 2. TUTUP LIGHTBOX (Bisa klik tombol silang ATAU klik background hitamnya)
+      if (e.target.closest("#imageLightbox")) {
+        const lightbox = document.getElementById("imageLightbox");
+        if (lightbox) {
+            lightbox.classList.replace("flex", "hidden");
+            // Kosongkan src setelah animasi selesai agar memori lega
+            setTimeout(() => {
+                document.getElementById("lightboxImg").src = "";
+            }, 200);
+        }
+      }
     });
+
+// Panggil updateTableUI pertama kali saat halaman dibuka
+updateTableUI();
 
     isAdminAttendanceEventsInitialized = true;
   }

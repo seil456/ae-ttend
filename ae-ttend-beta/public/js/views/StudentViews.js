@@ -180,6 +180,7 @@ export async function attachFaceRegistrationEvents(user) {
         if (targetNode) {
           targetNode.payload.faceCode = binaryString;
           user.payload.faceCode = binaryString;
+          console.log(binaryString);
           showStatus("Data wajah berhasil disimpan di Memori!", "success");
           stopCameraAndDetection();
         } else {
@@ -1035,7 +1036,13 @@ export function renderStudentAttendance(user) {
                     <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-3"></i>
                     <h3 class="text-white font-bold mb-1">Verifikasi Gagal</h3>
                     <p id="error-message" class="text-gray-300 text-xs mb-5">Anda berada di luar radius kampus.</p>
-                    <button id="btn-retry" class="px-6 py-2 bg-[#ab3428] hover:bg-red-700 text-white text-sm font-bold rounded-xl transition shadow-lg">Coba Lagi</button>
+                    
+                    <button id="btn-retry" class="w-full px-6 py-2.5 bg-[#ab3428] hover:bg-red-700 text-white text-sm font-bold rounded-xl transition shadow-lg mb-2">Coba Lagi</button>
+                    
+                    <!-- TOMBOL BARU: Muncul saat gagal 3x -->
+                    <button id="btn-manual-verification" class="hidden w-full px-6 py-2.5 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-bold rounded-xl transition shadow-lg flex items-center justify-center gap-2">
+                        <i class="fas fa-user-shield"></i> Lapor & Presensi Manual
+                    </button>
                 </div>
 
                 <div id="complete-state" class="hidden flex-col items-center text-center bg-white/5 p-6 rounded-3xl border border-white/10 backdrop-blur-md w-full max-w-sm">
@@ -1115,6 +1122,51 @@ export function renderStudentAttendance(user) {
         </div>
     </div>
 
+    <div id="modal-manual-verification" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+        <div class="relative w-full max-w-lg bg-gray-900 rounded-3xl p-8 shadow-2xl border border-gray-800">
+            <button id="btn-close-manual" class="absolute top-6 right-6 text-gray-400 hover:text-white z-50 transition bg-gray-800/50 w-8 h-8 rounded-full flex items-center justify-center">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 bg-yellow-500/20 text-yellow-500 rounded-2xl flex items-center justify-center text-xl shrink-0">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-white text-lg">Verifikasi Manual</h3>
+                    <p class="text-xs text-gray-400">Sistem gagal mendeteksi wajah 3x</p>
+                </div>
+            </div>
+
+            <form id="form-manual-verification" class="space-y-4">
+    <div>
+        <label class="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">Jelaskan Kendala (Wajib)</label>
+        <textarea id="manual-notes" rows="3" placeholder="Pilih template di atas atau ketik di sini..." class="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-xl focus:ring-[#3b8ea5] focus:border-[#3b8ea5] block p-3 mb-4 outline-none transition resize-none"></textarea>
+        <label class="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest ml-1">PILIH ALASAN CEPAT</label>
+        <div class="flex flex-wrap gap-2 mb-4">
+            <button type="button" class="chat-template bg-gray-700/50 hover:bg-[#3b8ea5]/20 border border-gray-600 text-gray-300 hover:text-[#3b8ea5] hover:border-[#3b8ea5] px-3 py-1.5 rounded-full text-xs transition-all flex items-center gap-2" data-msg="Pencahayaan di ruangan terlalu gelap sehingga wajah tidak terdeteksi.">
+                <i class="fas fa-moon text-[10px]"></i> Gelap
+            </button>
+            <button type="button" class="chat-template bg-gray-700/50 hover:bg-[#3b8ea5]/20 border border-gray-600 text-gray-300 hover:text-[#3b8ea5] hover:border-[#3b8ea5] px-3 py-1.5 rounded-full text-xs transition-all flex items-center gap-2" data-msg="Kamera perangkat sedang buram/bermasalah saat proses scanning.">
+                <i class="fas fa-camera text-[10px]"></i> Kamera Buram
+            </button>
+            <button type="button" class="chat-template bg-gray-700/50 hover:bg-[#3b8ea5]/20 border border-gray-600 text-gray-300 hover:text-[#3b8ea5] hover:border-[#3b8ea5] px-3 py-1.5 rounded-full text-xs transition-all flex items-center gap-2" data-msg="Sistem terus menerus gagal mencocokkan wajah saya dengan data lama.">
+                <i class="fas fa-robot text-[10px]"></i> Gagal Match
+            </button>
+            <button type="button" class="chat-template bg-gray-700/50 hover:bg-[#3b8ea5]/20 border border-gray-600 text-gray-300 hover:text-[#3b8ea5] hover:border-[#3b8ea5] px-3 py-1.5 rounded-full text-xs transition-all flex items-center gap-2" data-msg="Saya sedang menggunakan kacamata/aksesoris medis yang mengganggu verifikasi.">
+                <i class="fas fa-glasses text-[10px]"></i> Aksesoris
+            </button>
+        </div>
+
+    </div>
+
+    <button type="button" id="btn-submit-manual" class="w-full mt-2 bg-[#3b8ea5] hover:bg-[#2d728f] text-white font-bold py-3.5 rounded-xl transition shadow-md flex items-center justify-center gap-2 active:scale-95">
+        <i class="fas fa-paper-plane"></i> Lapor & Tetap Hadir
+    </button>
+</form>
+        </div>
+    </div>
+
     <div id="modal-all-history" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm px-4 py-8">
         <div class="relative w-full max-w-4xl bg-white rounded-3xl p-8 shadow-2xl border border-gray-100 max-h-full flex flex-col">
             
@@ -1175,16 +1227,25 @@ export function initAttendanceEvents(user) {
   const videoElement = document.getElementById("live-video");
   const btnRetry = document.getElementById("btn-retry");
   const btnDone = document.getElementById("btn-done");
+  const btnManual = document.getElementById("btn-manual-verification"); // Tombol baru
 
   const modalLive = document.getElementById("modal-live-attendance");
   const btnOpenLive = document.getElementById("btn-open-live");
   const btnCloseLive = document.getElementById("btn-close-live");
+
   const btnOpenHistory = document.getElementById("btn-open-history");
   const btnCloseHistory = document.getElementById("btn-close-history");
+
   const btnOpenLeave = document.getElementById("btn-open-izin");
   const btnCloseLeave = document.getElementById("btn-close-izin");
   const modalLeave = document.getElementById("modal-leave-request");
-  const modalHistory = document.getElementById("modal-all-history");
+
+  // DOM Modal Baru
+  const modalManual = document.getElementById("modal-manual-verification");
+  const btnCloseManual = document.getElementById("btn-close-manual");
+  const btnSubmitManual = document.getElementById("btn-submit-manual");
+  const templates = document.querySelectorAll(".chat-template");
+  const manualNotes = document.getElementById("manual-notes");
 
   let currentStep = "location";
   let gpsAttempts = 0;
@@ -1202,22 +1263,14 @@ export function initAttendanceEvents(user) {
     if (!circle) return;
 
     if (status === "active") {
-      circle.className =
-        "w-10 h-10 rounded-full bg-[#3b8ea5] text-white flex items-center justify-center font-bold shadow-[0_0_15px_rgba(59,142,165,0.5)] transition-colors duration-300";
-      text.className =
-        "absolute -bottom-6 text-xs font-bold text-white whitespace-nowrap";
-      if (line)
-        line.className =
-          "flex-1 h-1 bg-[#3b8ea5] mx-2 rounded-full transition-colors duration-300";
+      circle.className = "w-10 h-10 rounded-full bg-[#3b8ea5] text-white flex items-center justify-center font-bold shadow-[0_0_15px_rgba(59,142,165,0.5)] transition-colors duration-300";
+      text.className = "absolute -bottom-6 text-xs font-bold text-white whitespace-nowrap";
+      if (line) line.className = "flex-1 h-1 bg-[#3b8ea5] mx-2 rounded-full transition-colors duration-300";
     } else if (status === "done") {
       circle.innerHTML = '<i class="fas fa-check"></i>';
-      circle.className =
-        "w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold transition-colors duration-300";
-      text.className =
-        "absolute -bottom-6 text-xs font-bold text-green-400 whitespace-nowrap";
-      if (line)
-        line.className =
-          "flex-1 h-1 bg-green-500 mx-2 rounded-full transition-colors duration-300";
+      circle.className = "w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold transition-colors duration-300";
+      text.className = "absolute -bottom-6 text-xs font-bold text-green-400 whitespace-nowrap";
+      if (line) line.className = "flex-1 h-1 bg-green-500 mx-2 rounded-full transition-colors duration-300";
     }
   }
 
@@ -1254,10 +1307,12 @@ export function initAttendanceEvents(user) {
 
     if (currentAttemptLimit < maxAttempts) {
       errorMessage.innerHTML = `${errorMsg} <br><span class="text-white/50 text-[10px]">Percobaan (${currentAttemptLimit}/${maxAttempts})</span>`;
-      btnRetry.classList.remove("hidden");
+      if (btnRetry) btnRetry.classList.remove("hidden");
+      if (btnManual) btnManual.classList.add("hidden"); // Sembunyikan manual
     } else {
-      errorMessage.innerHTML = `${errorMsg} <br><span class="text-red-400 text-xs mt-1 block">Batas percobaan habis. Silakan gunakan form pengajuan izin/sakit.</span>`;
-      btnRetry.classList.add("hidden");
+      errorMessage.innerHTML = `${errorMsg} <br><span class="text-red-400 text-xs mt-1 block">Batas percobaan habis. Silakan gunakan opsi verifikasi manual.</span>`;
+      if (btnRetry) btnRetry.classList.add("hidden"); // Sembunyikan coba lagi
+      if (btnManual) btnManual.classList.remove("hidden"); // Tampilkan tombol manual
     }
   }
 
@@ -1280,26 +1335,9 @@ export function initAttendanceEvents(user) {
             let isInsideGeofence = false;
             let foundLocId = null;
 
-            const targetLocations =
-              db.locations && db.locations.length > 0
-                ? db.locations
-                : [
-                  {
-                    id: "LOK-POLMAN",
-                    name: "Polman Bandung",
-                    lat: -6.874457,
-                    lng: 107.61864,
-                    radius: 300,
-                  },
-                ];
-
+            const targetLocations = db.locations && db.locations.length > 0 ? db.locations : [{ id: "LOK-POLMAN", name: "Polman Bandung", lat: -6.874457, lng: 107.61864, radius: 300 }];
             for (const loc of targetLocations) {
-              const dist = calculateHaversine(
-                userLat,
-                userLng,
-                loc.lat,
-                loc.lng,
-              );
+              const dist = calculateHaversine(userLat, userLng, loc.lat, loc.lng);
               if (dist <= loc.radius) {
                 isInsideGeofence = true;
                 foundLocId = loc.id;
@@ -1317,8 +1355,7 @@ export function initAttendanceEvents(user) {
               errorCallback("Anda berada di luar radius kampus.", "geofence");
             }
           },
-          (error) =>
-            errorCallback("Akses GPS ditolak atau sinyal lemah.", "geofence"),
+          (error) => errorCallback("Akses GPS ditolak atau sinyal lemah.", "geofence"),
           { enableHighAccuracy: true, timeout: 10000 },
         );
       } else {
@@ -1348,15 +1385,11 @@ export function initAttendanceEvents(user) {
       }
 
       statusText.innerText = "Menghubungkan Kamera...";
-      activeStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user" },
-      });
+      activeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
       videoElement.srcObject = activeStream;
 
       await new Promise((resolve) => {
-        videoElement.addEventListener("loadedmetadata", resolve, {
-          once: true,
-        });
+        videoElement.addEventListener("loadedmetadata", resolve, { once: true });
       });
 
       loadingState.classList.add("hidden");
@@ -1376,28 +1409,19 @@ export function initAttendanceEvents(user) {
 
   async function verifyFaceCore() {
     if (!modelsLoaded || hasSuccessfullyVerified || isProcessingFace) return;
-
     isProcessingFace = true;
 
     try {
-      const detection = await faceapi
-        .detectSingleFace(videoElement)
-        .withFaceLandmarks()
-        .withFaceDescriptor();
-
+      const detection = await faceapi.detectSingleFace(videoElement).withFaceLandmarks().withFaceDescriptor();
       if (hasSuccessfullyVerified) return;
 
       if (detection) {
         const binaryString = atob(user.payload.faceCode);
         const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++)
-          bytes[i] = binaryString.charCodeAt(i);
+        for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
         const registeredDescriptor = new Float32Array(bytes.buffer);
 
-        const distance = faceapi.euclideanDistance(
-          detection.descriptor,
-          registeredDescriptor,
-        );
+        const distance = faceapi.euclideanDistance(detection.descriptor, registeredDescriptor);
 
         if (distance < 0.55) {
           hasSuccessfullyVerified = true;
@@ -1412,7 +1436,6 @@ export function initAttendanceEvents(user) {
         errorCallback("Wajah tidak terdeteksi dengan jelas.", "face");
       }
     } catch (error) {
-      console.error("Face Verif Error:", error);
       clearInterval(detectionInterval);
       errorCallback("Gagal mengeksekusi pendeteksian wajah.", "face");
     } finally {
@@ -1430,15 +1453,12 @@ export function initAttendanceEvents(user) {
     updateStep(3, "done");
 
     const now = new Date();
-    document.getElementById("time-recorded").innerText = now.toLocaleTimeString(
-      [],
-      { hour: "2-digit", minute: "2-digit" },
-    );
+    document.getElementById("time-recorded").innerText = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
     const recordId = "ATT-" + Date.now();
     db.attendance.insert(recordId, {
       id: recordId,
-      id_mahasiswa: user.payload.id || user.payload.nim,
+      id_mahasiswa: user?.payload?.id || user?.payload?.nim || "225443028",
       id_lokasi: matchedLocationId,
       attendance: "present",
       status: "On Time",
@@ -1448,27 +1468,20 @@ export function initAttendanceEvents(user) {
     });
   }
 
-
-
+  // --- EVENT LISTENER MODAL LIVE ---
   if (btnRetry) {
     btnRetry.addEventListener("click", () => {
       errorState.classList.add("hidden");
       errorState.classList.remove("flex");
-
-      if (currentStep === "location") {
-        startGeofencing();
-      } else if (currentStep === "face") {
-        initFaceVerification();
-      }
+      if (currentStep === "location") startGeofencing();
+      else if (currentStep === "face") initFaceVerification();
     });
   }
 
   if (btnDone) {
     btnDone.addEventListener("click", () => {
       stopCamera();
-      window.dispatchEvent(
-        new CustomEvent("app-navigate", { detail: "overview" }),
-      );
+      window.dispatchEvent(new CustomEvent("app-navigate", { detail: "overview" }));
     });
   }
 
@@ -1488,17 +1501,94 @@ export function initAttendanceEvents(user) {
     };
   }
 
-  // ==========================================
-  // LOGIKA FORM PENGAJUAN (ANTI-ERROR & TANPA REFRESH)
-  // ==========================================
+  // --- LOGIKA MODAL VERIFIKASI MANUAL (BARU) ---
+  if (btnManual && modalManual && modalLive) {
+    btnManual.onclick = () => {
+      // 1. Tutup modal live attendance
+      modalLive.classList.replace("flex", "hidden");
+      // 2. Buka modal manual verification
+      modalManual.classList.replace("hidden", "flex");
+    };
+  }
 
-  // Penanda agar event tidak dobel saat pindah halaman
+  if (btnCloseManual && modalManual) {
+    btnCloseManual.onclick = () => {
+      modalManual.classList.replace("flex", "hidden");
+    };
+  }
+
+  templates.forEach(btn => {
+    btn.onclick = () => {
+        // Ambil pesan dari data-msg
+        const msg = btn.getAttribute("data-msg");
+        // Masukkan ke textarea
+        manualNotes.value = msg;
+        // Beri efek sedikit animasi pada textarea agar user sadar teks sudah masuk
+        manualNotes.classList.add("ring-2", "ring-[#3b8ea5]");
+        setTimeout(() => manualNotes.classList.remove("ring-2", "ring-[#3b8ea5]"), 500);
+        
+        manualNotes.focus();
+    };
+  });
+
+ if (btnSubmitManual) {
+    btnSubmitManual.onclick = (e) => {
+        e.preventDefault();
+
+        const notesInput = document.getElementById("manual-notes");
+        const notesValue = notesInput.value.trim();
+
+        // 1. Validasi Input
+        if (!notesValue) {
+            alert("Harap jelaskan kendala Anda atau pilih template agar bisa di-review Admin!");
+            return;
+        }
+
+        // 2. Persiapan Data
+        const now = new Date();
+        const recordId = "ATT-" + Date.now();
+        
+        // Ambil data user dari state global
+        const currentUser = db.state.currentUser; 
+        const nimMahasiswa = currentUser.payload.nim;
+
+        // 3. Simpan ke Database (db.attendance)
+        // Kita set status ke 'Pending' agar Admin harus Approve/Reject manual
+        db.attendance.insert(recordId, {
+            id: recordId,
+            id_mahasiswa: nimMahasiswa,
+            id_lokasi: matchedLocationId || "-", // Menggunakan lokasi yang terdeteksi saat geofencing
+            attendance: "permit", // Kategori permit (izin sistem)
+            status: "Pending", 
+            notes: "FAILED FACE SCAN: " + notesValue, // Keterangan untuk Admin
+            created_at: now.toISOString(),
+            updated_at: now.toISOString(),
+        });
+
+        // 4. Feedback & Cleanup
+        alert("Laporan manual berhasil dikirim. Status Anda saat ini 'Pending', silakan tunggu review dari Admin.");
+        
+        // Reset form
+        notesInput.value = "";
+        
+        // Tutup modal live attendance
+        if (modalLive) {
+            modalLive.classList.replace("flex", "hidden");
+            stopCamera(); // Pastikan kamera mati
+        }
+
+        // Kembali ke halaman utama untuk melihat update
+        window.dispatchEvent(
+            new CustomEvent("app-navigate", { detail: "overview" })
+        );
+    };
+}
+  // --- LOGIKA MODAL PENGAJUAN IZIN/SAKIT (EVENT DELEGATION) ---
   if (!window.izinEventBound) {
     window.izinEventBound = true;
     window.uploadedFileName = "";
     window.uploadedFileBase64 = null;
 
-    // 1. EVENT DELEGATION: AREA UPLOAD BUKTI
     document.addEventListener('change', function (e) {
       if (e.target && e.target.id === 'dropzone-file') {
         const fileInput = e.target;
@@ -1506,28 +1596,20 @@ export function initAttendanceEvents(user) {
 
         if (fileInput.files && fileInput.files[0]) {
           window.uploadedFileName = fileInput.files[0].name;
-
-          // Feedback UI: Teks berubah jadi warna biru
           if (fileText) {
             fileText.textContent = window.uploadedFileName;
             fileText.classList.replace('text-gray-500', 'text-[#3b8ea5]');
             fileText.classList.add('font-bold');
           }
-
-          // Convert ke Base64
           const reader = new FileReader();
-          reader.onload = (event) => {
-            window.uploadedFileBase64 = event.target.result;
-          };
+          reader.onload = (event) => { window.uploadedFileBase64 = event.target.result; };
           reader.readAsDataURL(fileInput.files[0]);
         }
       }
     });
 
-    // 2. EVENT DELEGATION: TOMBOL SUBMIT
     document.addEventListener('click', function (e) {
       const btnSubmitIzin = e.target.closest('#form-perizinan button');
-
       if (btnSubmitIzin) {
         e.preventDefault();
 
@@ -1536,13 +1618,11 @@ export function initAttendanceEvents(user) {
         const tanggalInput = form.querySelector('input[type="date"]');
         const keteranganInput = form.querySelector('textarea');
 
-        // Validasi
         if (!tanggalInput.value || !keteranganInput.value.trim()) {
           alert("Harap isi tanggal dan keterangan pengajuan!");
           return;
         }
 
-        // Susun Data
         const attendanceType = kategoriInput.value === 'sakit' ? 'sick' : 'permit';
         const recordId = "ATT-" + Date.now();
         const dateObj = new Date(tanggalInput.value);
@@ -1552,7 +1632,6 @@ export function initAttendanceEvents(user) {
         let finalNotes = keteranganInput.value.trim();
         if (window.uploadedFileName) finalNotes += ` (Lampiran: ${window.uploadedFileName})`;
 
-        // Insert ke Memori Linked List (db.attendance)
         db.attendance.insert(recordId, {
           id: recordId,
           id_mahasiswa: user?.payload?.id || user?.payload?.nim || "225443028",
@@ -1567,7 +1646,6 @@ export function initAttendanceEvents(user) {
 
         alert(`Pengajuan ${kategoriInput.value} berhasil. Lihat tabel riwayat di bawah!`);
 
-        // Reset Form & UI
         form.reset();
         const fileText = form.querySelector('#dropzone-file')?.previousElementSibling?.querySelector('p');
         if (fileText) {
@@ -1578,54 +1656,41 @@ export function initAttendanceEvents(user) {
         window.uploadedFileName = "";
         window.uploadedFileBase64 = null;
 
-        // Tutup Modal
-        const modalLeave = document.getElementById('modal-leave-request');
-        if (modalLeave) modalLeave.classList.replace('flex', 'hidden');
+        const modalLeaveInner = document.getElementById('modal-leave-request');
+        if (modalLeaveInner) modalLeaveInner.classList.replace('flex', 'hidden');
 
-        // PENTING: Refresh tampilan dashboard secara reaktif TANPA me-refresh browser!
-        // Ini akan memicu fungsi render StudentDashboard kamu ulang agar tabelnya update
         window.dispatchEvent(new CustomEvent("app-navigate", { detail: "overview" }));
       }
     });
   }
 
-  // 3. Tombol Buka Modal
+  // Buka/Tutup Modal Izin
   if (btnOpenLeave && modalLeave) {
-    btnOpenLeave.onclick = () => {
-      modalLeave.classList.replace("hidden", "flex");
-    };
+    btnOpenLeave.onclick = () => { modalLeave.classList.replace("hidden", "flex"); };
   }
-
-  // 4. Tombol Tutup Modal & Reset Form (jika batal submit)
   if (btnCloseLeave && modalLeave) {
     btnCloseLeave.onclick = () => {
       modalLeave.classList.replace("flex", "hidden");
-
+      const formPerizinan = document.getElementById("form-perizinan");
+      const fileInput = document.getElementById("dropzone-file");
+      const fileText = fileInput?.previousElementSibling?.querySelector('p');
       if (formPerizinan) formPerizinan.reset();
       if (fileText) {
         fileText.textContent = "Klik untuk unggah";
         fileText.classList.replace('text-[#3b8ea5]', 'text-gray-500');
         fileText.classList.remove('font-bold');
       }
-      uploadedFileName = "";
-      uploadedFileBase64 = null;
+      window.uploadedFileName = "";
+      window.uploadedFileBase64 = null;
     };
   }
 
+  // Buka/Tutup History
   if (btnOpenHistory && document.getElementById("modal-all-history")) {
-    btnOpenHistory.onclick = () => {
-      document
-        .getElementById("modal-all-history")
-        .classList.replace("hidden", "flex");
-    };
+    btnOpenHistory.onclick = () => document.getElementById("modal-all-history").classList.replace("hidden", "flex");
   }
-
   if (btnCloseHistory && document.getElementById("modal-all-history")) {
-    btnCloseHistory.onclick = () => {
-      document
-        .getElementById("modal-all-history")
-        .classList.replace("flex", "hidden");
-    };
+    btnCloseHistory.onclick = () => document.getElementById("modal-all-history").classList.replace("flex", "hidden");
   }
 }
 

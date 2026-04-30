@@ -12,9 +12,7 @@ export function AdminLayout(content, activeRoute = 'admin-dashboard', user) {
       <aside class="w-64 flex-shrink-0 bg-langit text-white flex flex-col transition-all duration-300 shadow-xl z-20">
         <div class="h-16 flex items-center px-6 border-b border-pasifik/50">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-vanila rounded-lg flex items-center justify-center shadow-inner">
-              <svg class="w-5 h-5 text-langit" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            </div>
+            <img src="public/images/logoCerah.png" alt="Logo" class="w-12 h-12 object-contain">
             <h2 class="text-xl font-bold text-vanila tracking-wider">AE-ttend</h2>
           </div>
         </div>
@@ -37,7 +35,7 @@ export function AdminLayout(content, activeRoute = 'admin-dashboard', user) {
             <span class="font-medium">Locations</span>
           </a>
           <a href="#" data-route="admin-announcements" class="${navClass('admin-announcements')}">
-            <svg class="${iconClass('admin-announcements')}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 11v2a1 1 0 001 1h2l4 3V7L6 10H4a1 1 0 00-1 1zm13-3l3-2v12l-3-2M14 10v4"/></svg>            <span class="font-medium">announcements</span>
+            <svg class="${iconClass('admin-announcements')}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 11v2a1 1 0 001 1h2l4 3V7L6 10H4a1 1 0 00-1 1zm13-3l3-2v12l-3-2M14 10v4"/></svg>            <span class="font-medium">Announcements</span>
           </a>
         </nav>
       </aside>
@@ -90,8 +88,8 @@ export function StudentLayout(content, user, activeRoute = 'overview') {
     <div class="min-h-screen bg-gray-50 flex flex-col">
         <header class="sticky top-0 z-50 flex items-center justify-between py-4 px-8 border-b border-gray-100 bg-[#2d728f] shadow-sm">
             <div class="flex items-center gap-2">
-                <img src="../../public/images/assets/Logo.jpeg" alt="Logo" class="w-8 h-8 object-contain rounded-md" />
-                <span class="font-bold text-xl text-white">ae-ttend</span>
+                <img src="public/images/logoCerah.png" alt="Logo" class="w-12 h-12 object-contain rounded-md" />
+                <span class="font-bold text-xl text-white">AE-ttend</span>
             </div>
 
             <nav class="hidden md:flex items-center gap-8 nav-menu">
@@ -193,13 +191,17 @@ export function LoginLayout() {
     <div class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
     <div class="flex w-full max-w-[900px] bg-white rounded-3xl shadow-2xl overflow-hidden min-h-[550px]">
 
-            <div class="w-full md:w-1/2 p-10 sm:p-14 flex flex-col justify-center relative">
-            <img src="public/images/logo.png" alt="Logo" class="w-16 h-auto mb-8">
+            <div class="w-full md:w-1/2 p-10 sm:p-14 flex flex-col justify-center items-center text-center relative">
 
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome back</h1>
-                <p class="text-gray-500 text-sm mb-8 font-medium">Please log in to your account.</p>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                Welcome <span style="font-family: 'Dancing Script', cursive; font-weight: 700;" 
+                class="text-pasifik text-5xl ml-1 inline-block translate-y-[2px]">
+                back!
+                </span>
+            </h1>
+            <p class="text-gray-500 text-sm mb-8 font-medium">Please log in to your account.</p>
                 
-                <form id="form-login" class="space-y-5">
+                <form id="form-login" class="w-full text-left space-y-5">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">NIM</label>
                         <div class="relative flex items-center">
@@ -230,7 +232,7 @@ export function LoginLayout() {
                 </form>
             </div>
             <div class="hidden md:block md:w-1/2 relative bg-pasifik">
-                <img src="public/images/asset-login.jpeg" alt="bg" class="w-full h-full object-cover opacity-80">
+                <img src="public/images/login.png" alt="bg" class="w-full h-full object-cover opacity-80">
             </div>
         </div>
     </div>
