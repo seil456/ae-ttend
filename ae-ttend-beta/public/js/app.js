@@ -472,7 +472,12 @@ if (newUserPic) {
       let finalNim = role === 'admin' ? "ADM-" + Date.now().toString().slice(-4) : inputNim.value;
       let finalKelas = role === 'admin' ? "-" : inputKelas.value;
       let fullPath = "default.png";
-
+      
+      const existingUser = db.users.get(finalNim); 
+      if (existingUser) {
+          return alert(`Gagal! NIM ${finalNim} sudah terdaftar untuk user: ${existingUser.nama}`);
+      }
+      
       if (file) {
             const reader = new FileReader();
             reader.onload = (event) => {
