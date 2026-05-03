@@ -440,24 +440,17 @@ if (newUserPic) {
                 }
             };
             reader.readAsDataURL(file);
-
-            // --- 2. Siapkan "Simulasi" Path untuk Database ---
-            // Kita buat nama file berdasarkan NIM (atau timestamp jika NIM belum diisi)
             const inputNim = document.getElementById("newNim");
             const nim = inputNim && inputNim.value ? inputNim.value : Date.now();
             const extension = file.name.split('.').pop();
-            
-            // Nama file yang akan disimpan di database (sebagai referensi)
             const fileName = `user_${nim}.${extension}`;
-            
-            // Simpan nama file ini ke dalam atribut data agar bisa diambil saat form di-submit
             newUserPic.setAttribute("data-filename", fileName);
             
             console.log("File siap: " + fileName);
         }
     };
 }
-  // Submit Add Form
+// Submit Add Form
   if (formAdd) {
     formAdd.onsubmit = (e) => {
       e.preventDefault();
@@ -471,23 +464,36 @@ if (newUserPic) {
 
       let finalNim = role === 'admin' ? "ADM-" + Date.now().toString().slice(-4) : inputNim.value;
       let finalKelas = role === 'admin' ? "-" : inputKelas.value;
-      let fullPath = "default.png";
-      
-      const existingUser = db.users.get(finalNim); 
-      if (existingUser) {
-          return alert(`Gagal! NIM ${finalNim} sudah terdaftar untuk user: ${existingUser.nama}`);
+
+      let isDuplicate = false;
+      let duplicateName = "";
+      let currentNode = db.users.head; 
+
+      while (currentNode) {
+          const user = currentNode.value || currentNode.data; 
+
+          if (user && String(user.nim).trim() === String(finalNim).trim()) {
+              isDuplicate = true;
+              duplicateName = user.nama;
+              break; 
+          }
+          currentNode = currentNode.next; 
       }
-      
+
+      if (isDuplicate) {
+          alert(`Gagal! NIM/ID ${finalNim} sudah digunakan oleh ${duplicateName}`);
+          return; 
+      }
       if (file) {
             const reader = new FileReader();
             reader.onload = (event) => {
-                const base64Data = event.target.result; // Ini data asli gambarnya
+                const base64Data = event.target.result;
 
                 db.users.insert(finalNim, {
                     nim: finalNim,
                     nama: nama,
                     kelas: finalKelas,
-                    userPic: base64Data, // SIMPAN DATANYA, BUKAN NAMA FILENYA
+                    userPic: base64Data,
                     role: role,
                     password: password,
                     faceCode: null
@@ -499,7 +505,6 @@ if (newUserPic) {
             };
             reader.readAsDataURL(file);
         } else {
-            // Jika tidak ada foto, pakai default
             db.users.insert(finalNim, {
                 nim: finalNim,
                 nama: nama,
