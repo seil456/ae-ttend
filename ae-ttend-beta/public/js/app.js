@@ -450,75 +450,65 @@ if (newUserPic) {
         }
     };
 }
-// Submit Add Form
-  if (formAdd) {
-    formAdd.onsubmit = (e) => {
-      e.preventDefault();
-      const role = inputRole.value;
-      const nama = document.getElementById("newNama").value;
-      const password = document.getElementById("newPassword").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
-      const file = newUserPic.files[0];
+if (formAdd) {
+  formAdd.onsubmit = (e) => {
+    e.preventDefault();
 
-      if (password !== confirmPassword) return alert("Konfirmasi password tidak cocok!");
+    const role = inputRole.value;
+    const nama = document.getElementById("newNama").value;
+    const password = document.getElementById("newPassword").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const file = newUserPic.files[0];
 
-      let finalNim = role === 'admin' ? "ADM-" + Date.now().toString().slice(-4) : inputNim.value;
-      let finalKelas = role === 'admin' ? "-" : inputKelas.value;
+    if (password !== confirmPassword) {
+      return alert("Konfirmasi password tidak cocok!");
+    }
 
-      let isDuplicate = false;
-      let duplicateName = "";
-      let currentNode = db.users.head; 
+    let finalNim = role === 'admin' ? "ADM-" + Date.now().toString().slice(-4) : inputNim.value.trim();
+    let finalKelas = role === 'admin' ? "-" : inputKelas.value;
 
-      while (currentNode) {
-          const user = currentNode.value || currentNode.data; 
-
-          if (user && String(user.nim).trim() === String(finalNim).trim()) {
-              isDuplicate = true;
-              duplicateName = user.nama;
-              break; 
-          }
-          currentNode = currentNode.next; 
-      }
-
-      if (isDuplicate) {
-          alert(`Gagal! NIM/ID ${finalNim} sudah digunakan oleh ${duplicateName}`);
-          return; 
-      }
-      if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const base64Data = event.target.result;
-
-                db.users.insert(finalNim, {
-                    nim: finalNim,
-                    nama: nama,
-                    kelas: finalKelas,
-                    userPic: base64Data,
-                    role: role,
-                    password: password,
-                    faceCode: null
-                });
-
-                alert(`Berhasil mendaftarkan ${role}: ${nama}`);
-                closeAddModal();
-                navigate("admin-users");
-            };
-            reader.readAsDataURL(file);
-        } else {
-            db.users.insert(finalNim, {
-                nim: finalNim,
-                nama: nama,
-                kelas: finalKelas,
-                userPic: "public/images/userPics/default.png", 
-                role: role,
-                password: password,
-                faceCode: null
-            });
-            alert(`Berhasil mendaftarkan ${role}: ${nama}`);
-            closeAddModal();
-            navigate("admin-users");
+    const checkIsDuplicate = (targetNim) => {
+      let node = db.users.head; 
+      while (node) {
+        const user = node.payload; 
+        if (user && String(user.nim).toLowerCase() === String(targetNim).toLowerCase()) {
+          return true; 
         }
+        node = node.next;
+      }
+      return false;
     };
+
+    if (checkIsDuplicate(finalNim)) {
+      return alert(`Gagal! NIM/ID "${finalNim}" sudah terdaftar dalam sistem.`);
+    }
+
+    const saveData = (picData) => {
+      db.users.insert(finalNim, {
+        nim: finalNim,
+        nama: nama,
+        kelas: finalKelas,
+        userPic: picData,
+        role: role,
+        password: password,
+        faceCode: null
+      });
+
+      alert(`Berhasil mendaftarkan ${role}: ${nama}`);
+      if (typeof closeAddModal === "function") closeAddModal();
+      navigate("admin-users");
+    };
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        saveData(event.target.result); 
+      };
+      reader.readAsDataURL(file);
+    } else {
+      saveData("public/images/userPics/default.png"); 
+    }
+  };
 }
 
   // =========================================================================
